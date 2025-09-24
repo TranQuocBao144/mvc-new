@@ -1,0 +1,293 @@
+﻿@{
+    ViewBag.Title = "Tạo sản phẩm mới";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .product-create-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+    }
+
+    .main-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-bottom: 20px;
+        border: 1px solid #e0e6ed;
+    }
+
+    .page-title {
+        color: #2c3e50;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 30px;
+        text-align: center;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+    .form-section {
+        background: #f8f9fc;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 25px;
+        border-left: 4px solid #667eea;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-title {
+        color: #4a5568;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+
+
+    .form-actions {
+        text-align: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+
+        .form-actions .btn {
+            padding: 12px 30px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+    .btn-secondary {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+    .test-inputs-container {
+        background: #fff8e1;
+        border-radius: 12px;
+        padding: 25px;
+        border-left: 4px solid #ffa726;
+        box-shadow: 0 2px 10px rgba(255, 167, 38, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+    .form-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 12px 15px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+
+    /* DevExpress Form Layout Styling */
+    .dx-formlayout {
+        background: white;
+        border-radius: 8px;
+        padding: 0;
+    }
+
+    .dx-group-caption {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px 8px 0 0;
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+
+    .dx-group-content {
+        padding: 25px;
+        border: 1px solid #e2e8f0;
+        border-top: none;
+        border-radius: 0 0 8px 8px;
+    }
+
+    .dx-button.dx-button-normal {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+        .dx-button.dx-button-normal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+    .alert {
+        border-radius: 8px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        border: none;
+        font-weight: 500;
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        color: white;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        color: white;
+    }
+
+    .alert-info {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        color: white;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .product-create-container {
+            padding: 15px;
+        }
+
+        .main-card {
+            padding: 20px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .form-section {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="product-create-container">
+    <div class="main-card">
+        <h2 class="page-title">Tạo sản phẩm mới</h2>
+
+        @using (Html.BeginForm("Create", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            @*if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success">@TempData["Success"]</div>
+                }
+                if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger">@TempData["Error"]</div>
+                }
+                if (TempData["Debug"] != null)
+                {
+                    <div class="alert alert-info">@TempData["Debug"]</div>
+                }*@
+
+            <div class="form-section">
+                @(Html.DevExpress().FormLayout(settings => {
+                settings.Name = "ProductForm";
+                settings.ColCount = 2; // Chia form thành 2 cột
+
+                // Nhóm thông tin cơ bản
+                settings.Items.AddGroupItem(groupSettings => {
+                    groupSettings.Caption = "Product Details";
+                    groupSettings.ColCount = 1;
+                    groupSettings.Width = Unit.Percentage(50); // Chiếm 50% chiều rộng của form
+
+                    groupSettings.Items.Add(i => {
+                        i.Caption = "Product Name";
+                        i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                        var textBox = (TextBoxSettings)i.NestedExtensionSettings;
+                        textBox.Name = "ProductName";
+                        textBox.ShowModelErrors = true;
+                        textBox.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithText;
+                        textBox.Properties.ValidationSettings.RequiredField.IsRequired = true;
+                    });
+                    groupSettings.Items.Add(i =>
+                    {
+                        i.Caption = "Size";
+                        i.NestedExtensionType = FormLayoutNestedExtensionItemType.ComboBox;
+                        var comboBox = (ComboBoxSettings)i.NestedExtensionSettings;
+                        comboBox.Name = "ProductSize";
+                        comboBox.Properties.DataSource = ViewBag.Sizes;
+                        comboBox.Properties.ValueField = "Value";
+                        comboBox.Properties.TextField = "Text";
+                        comboBox.Properties.ValidationSettings.RequiredField.IsRequired = true;
+                        comboBox.ShowModelErrors = true;
+                        comboBox.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithText;
+                    });
+                });
+
+                // Nút lưu
+                settings.Items.Add(i => {
+                    i.ColSpan = 2; // Nút sẽ chiếm cả 2 cột
+                    i.HorizontalAlign = FormLayoutHorizontalAlign.Right; // Căn phải nút
+                    i.NestedExtensionType = FormLayoutNestedExtensionItemType.Button;
+                    var button = (ButtonSettings)i.NestedExtensionSettings;
+                    button.Name = "btnSubmit";
+                    button.Text = "Save";
+                    button.UseSubmitBehavior = true;
+                });
+            }).GetHtml())
+            </div>
+
+            <!-- Test với HTML input thông thường -->
+            <div class="test-inputs-container">
+                <h4 class="section-title test-section-title">Test với HTML Input thông thường</h4>
+                <div class="form-group">
+                    <label for="TestImage">Test Image (HTML Input):</label>
+                    <input type="file" name="TestImage" id="TestImage" accept=".jpg,.jpeg,.png,.gif,.bmp" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="TestDocument">Test Document (HTML Input):</label>
+                    <input type="file" name="TestDocument" id="TestDocument" accept=".pdf,.doc,.docx,.xls,.xlsx" class="form-control" />
+                </div>
+            </div>
+        }
+    </div>
+</div>

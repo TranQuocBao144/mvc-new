@@ -1,0 +1,18 @@
+# Visual Studio temporary files
+.vs/
+App_Data/*.json
+
+# User-specific files
+*.suo
+*.user
+
+# Binaries and build artifacts
+[Bb]in/
+[Oo]bj/
+
+# Packages
+[Pp]ackages/
+
+# Other common temporary files
+*.bak
+*.log

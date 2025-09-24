@@ -1,0 +1,742 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="QLBanHangModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="__MigrationHistory">
+          <Key>
+            <PropertyRef Name="MigrationId" />
+            <PropertyRef Name="ContextKey" />
+          </Key>
+          <Property Name="MigrationId" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="ContextKey" Type="nvarchar" MaxLength="300" Nullable="false" />
+          <Property Name="Model" Type="varbinary(max)" Nullable="false" />
+          <Property Name="ProductVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Color">
+          <Key>
+            <PropertyRef Name="IDColor" />
+          </Key>
+          <Property Name="IDColor" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TenColor" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CTDH">
+          <Key>
+            <PropertyRef Name="IDCTDH" />
+          </Key>
+          <Property Name="IDCTDH" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDDH" Type="int" Nullable="false" />
+          <Property Name="IDVariant" Type="int" Nullable="false" />
+          <Property Name="SoLuong" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DonHang">
+          <Key>
+            <PropertyRef Name="IDDH" />
+          </Key>
+          <Property Name="IDDH" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NgayDat" Type="date" Nullable="false" />
+          <Property Name="KhachHang" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="Image">
+          <Key>
+            <PropertyRef Name="IDImg" />
+          </Key>
+          <Property Name="IDImg" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="URL" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="IDVariant" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ImageNPL">
+          <Key>
+            <PropertyRef Name="IDImgNPL" />
+          </Key>
+          <Property Name="IDImgNPL" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="URL" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="IDNPL" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ListNPL">
+          <Key>
+            <PropertyRef Name="IDList" />
+          </Key>
+          <Property Name="IDList" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDDH" Type="int" Nullable="false" />
+          <Property Name="IDNPL" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Note">
+          <Key>
+            <PropertyRef Name="IDNote" />
+          </Key>
+          <Property Name="IDNote" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDPro" Type="int" Nullable="false" />
+          <Property Name="NoiDung" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="NPL">
+          <Key>
+            <PropertyRef Name="IDNPL" />
+          </Key>
+          <Property Name="IDNPL" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TenNPL" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Product">
+          <Key>
+            <PropertyRef Name="IDPro" />
+          </Key>
+          <Property Name="IDPro" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TenPro" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ProductVariant">
+          <Key>
+            <PropertyRef Name="IDVariant" />
+          </Key>
+          <Property Name="IDVariant" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDPro" Type="int" Nullable="false" />
+          <Property Name="IDSize" Type="int" Nullable="false" />
+          <Property Name="IDColor" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Size">
+          <Key>
+            <PropertyRef Name="IDSize" />
+          </Key>
+          <Property Name="IDSize" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TenSize" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <Association Name="FK__CTDH__IDDH__49C3F6B7">
+          <End Role="DonHang" Type="Self.DonHang" Multiplicity="1" />
+          <End Role="CTDH" Type="Self.CTDH" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DonHang">
+              <PropertyRef Name="IDDH" />
+            </Principal>
+            <Dependent Role="CTDH">
+              <PropertyRef Name="IDDH" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__CTDH__IDVariant__4AB81AF0">
+          <End Role="ProductVariant" Type="Self.ProductVariant" Multiplicity="1" />
+          <End Role="CTDH" Type="Self.CTDH" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductVariant">
+              <PropertyRef Name="IDVariant" />
+            </Principal>
+            <Dependent Role="CTDH">
+              <PropertyRef Name="IDVariant" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Image__IDVariant__4222D4EF">
+          <End Role="ProductVariant" Type="Self.ProductVariant" Multiplicity="1" />
+          <End Role="Image" Type="Self.Image" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductVariant">
+              <PropertyRef Name="IDVariant" />
+            </Principal>
+            <Dependent Role="Image">
+              <PropertyRef Name="IDVariant" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ImageNPL__IDNPL__534D60F1">
+          <End Role="NPL" Type="Self.NPL" Multiplicity="1" />
+          <End Role="ImageNPL" Type="Self.ImageNPL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NPL">
+              <PropertyRef Name="IDNPL" />
+            </Principal>
+            <Dependent Role="ImageNPL">
+              <PropertyRef Name="IDNPL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ListNPL__IDDH__4F7CD00D">
+          <End Role="DonHang" Type="Self.DonHang" Multiplicity="1" />
+          <End Role="ListNPL" Type="Self.ListNPL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DonHang">
+              <PropertyRef Name="IDDH" />
+            </Principal>
+            <Dependent Role="ListNPL">
+              <PropertyRef Name="IDDH" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ListNPL__IDNPL__5070F446">
+          <End Role="NPL" Type="Self.NPL" Multiplicity="1" />
+          <End Role="ListNPL" Type="Self.ListNPL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NPL">
+              <PropertyRef Name="IDNPL" />
+            </Principal>
+            <Dependent Role="ListNPL">
+              <PropertyRef Name="IDNPL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Note__IDPro__44FF419A">
+          <End Role="Product" Type="Self.Product" Multiplicity="1" />
+          <End Role="Note" Type="Self.Note" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="IDPro" />
+            </Principal>
+            <Dependent Role="Note">
+              <PropertyRef Name="IDPro" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductVa__IDCol__3F466844">
+          <End Role="Color" Type="Self.Color" Multiplicity="1" />
+          <End Role="ProductVariant" Type="Self.ProductVariant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Color">
+              <PropertyRef Name="IDColor" />
+            </Principal>
+            <Dependent Role="ProductVariant">
+              <PropertyRef Name="IDColor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductVa__IDPro__3D5E1FD2">
+          <End Role="Product" Type="Self.Product" Multiplicity="1" />
+          <End Role="ProductVariant" Type="Self.ProductVariant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="IDPro" />
+            </Principal>
+            <Dependent Role="ProductVariant">
+              <PropertyRef Name="IDPro" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductVa__IDSiz__3E52440B">
+          <End Role="Size" Type="Self.Size" Multiplicity="1" />
+          <End Role="ProductVariant" Type="Self.ProductVariant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Size">
+              <PropertyRef Name="IDSize" />
+            </Principal>
+            <Dependent Role="ProductVariant">
+              <PropertyRef Name="IDSize" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="QLBanHangModelStoreContainer">
+          <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Color" EntityType="Self.Color" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CTDH" EntityType="Self.CTDH" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DonHang" EntityType="Self.DonHang" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Image" EntityType="Self.Image" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ImageNPL" EntityType="Self.ImageNPL" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ListNPL" EntityType="Self.ListNPL" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Note" EntityType="Self.Note" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NPL" EntityType="Self.NPL" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Product" EntityType="Self.Product" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProductVariant" EntityType="Self.ProductVariant" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Size" EntityType="Self.Size" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__CTDH__IDDH__49C3F6B7" Association="Self.FK__CTDH__IDDH__49C3F6B7">
+            <End Role="DonHang" EntitySet="DonHang" />
+            <End Role="CTDH" EntitySet="CTDH" />
+          </AssociationSet>
+          <AssociationSet Name="FK__CTDH__IDVariant__4AB81AF0" Association="Self.FK__CTDH__IDVariant__4AB81AF0">
+            <End Role="ProductVariant" EntitySet="ProductVariant" />
+            <End Role="CTDH" EntitySet="CTDH" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Image__IDVariant__4222D4EF" Association="Self.FK__Image__IDVariant__4222D4EF">
+            <End Role="ProductVariant" EntitySet="ProductVariant" />
+            <End Role="Image" EntitySet="Image" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ImageNPL__IDNPL__534D60F1" Association="Self.FK__ImageNPL__IDNPL__534D60F1">
+            <End Role="NPL" EntitySet="NPL" />
+            <End Role="ImageNPL" EntitySet="ImageNPL" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ListNPL__IDDH__4F7CD00D" Association="Self.FK__ListNPL__IDDH__4F7CD00D">
+            <End Role="DonHang" EntitySet="DonHang" />
+            <End Role="ListNPL" EntitySet="ListNPL" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ListNPL__IDNPL__5070F446" Association="Self.FK__ListNPL__IDNPL__5070F446">
+            <End Role="NPL" EntitySet="NPL" />
+            <End Role="ListNPL" EntitySet="ListNPL" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Note__IDPro__44FF419A" Association="Self.FK__Note__IDPro__44FF419A">
+            <End Role="Product" EntitySet="Product" />
+            <End Role="Note" EntitySet="Note" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductVa__IDCol__3F466844" Association="Self.FK__ProductVa__IDCol__3F466844">
+            <End Role="Color" EntitySet="Color" />
+            <End Role="ProductVariant" EntitySet="ProductVariant" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductVa__IDPro__3D5E1FD2" Association="Self.FK__ProductVa__IDPro__3D5E1FD2">
+            <End Role="Product" EntitySet="Product" />
+            <End Role="ProductVariant" EntitySet="ProductVariant" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductVa__IDSiz__3E52440B" Association="Self.FK__ProductVa__IDSiz__3E52440B">
+            <End Role="Size" EntitySet="Size" />
+            <End Role="ProductVariant" EntitySet="ProductVariant" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="QLBanHangModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="C__MigrationHistory">
+          <Key>
+            <PropertyRef Name="MigrationId" />
+            <PropertyRef Name="ContextKey" />
+          </Key>
+          <Property Name="MigrationId" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ContextKey" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Model" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
+          <Property Name="ProductVersion" Type="String" MaxLength="32" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Color">
+          <Key>
+            <PropertyRef Name="IDColor" />
+          </Key>
+          <Property Name="IDColor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TenColor" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="ProductVariants" Relationship="Self.FK__ProductVa__IDCol__3F466844" FromRole="Color" ToRole="ProductVariant" />
+        </EntityType>
+        <EntityType Name="CTDH">
+          <Key>
+            <PropertyRef Name="IDCTDH" />
+          </Key>
+          <Property Name="IDCTDH" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDDH" Type="Int32" Nullable="false" />
+          <Property Name="IDVariant" Type="Int32" Nullable="false" />
+          <Property Name="SoLuong" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="DonHang" Relationship="Self.FK__CTDH__IDDH__49C3F6B7" FromRole="CTDH" ToRole="DonHang" />
+          <NavigationProperty Name="ProductVariant" Relationship="Self.FK__CTDH__IDVariant__4AB81AF0" FromRole="CTDH" ToRole="ProductVariant" />
+        </EntityType>
+        <EntityType Name="DonHang">
+          <Key>
+            <PropertyRef Name="IDDH" />
+          </Key>
+          <Property Name="IDDH" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NgayDat" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="KhachHang" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="CTDHs" Relationship="Self.FK__CTDH__IDDH__49C3F6B7" FromRole="DonHang" ToRole="CTDH" />
+          <NavigationProperty Name="ListNPLs" Relationship="Self.FK__ListNPL__IDDH__4F7CD00D" FromRole="DonHang" ToRole="ListNPL" />
+        </EntityType>
+        <EntityType Name="Image">
+          <Key>
+            <PropertyRef Name="IDImg" />
+          </Key>
+          <Property Name="IDImg" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="URL" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IDVariant" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="ProductVariant" Relationship="Self.FK__Image__IDVariant__4222D4EF" FromRole="Image" ToRole="ProductVariant" />
+        </EntityType>
+        <EntityType Name="ImageNPL">
+          <Key>
+            <PropertyRef Name="IDImgNPL" />
+          </Key>
+          <Property Name="IDImgNPL" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="URL" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IDNPL" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="NPL" Relationship="Self.FK__ImageNPL__IDNPL__534D60F1" FromRole="ImageNPL" ToRole="NPL" />
+        </EntityType>
+        <EntityType Name="ListNPL">
+          <Key>
+            <PropertyRef Name="IDList" />
+          </Key>
+          <Property Name="IDList" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDDH" Type="Int32" Nullable="false" />
+          <Property Name="IDNPL" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="DonHang" Relationship="Self.FK__ListNPL__IDDH__4F7CD00D" FromRole="ListNPL" ToRole="DonHang" />
+          <NavigationProperty Name="NPL" Relationship="Self.FK__ListNPL__IDNPL__5070F446" FromRole="ListNPL" ToRole="NPL" />
+        </EntityType>
+        <EntityType Name="Note">
+          <Key>
+            <PropertyRef Name="IDNote" />
+          </Key>
+          <Property Name="IDNote" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDPro" Type="Int32" Nullable="false" />
+          <Property Name="NoiDung" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Product" Relationship="Self.FK__Note__IDPro__44FF419A" FromRole="Note" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="NPL">
+          <Key>
+            <PropertyRef Name="IDNPL" />
+          </Key>
+          <Property Name="IDNPL" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TenNPL" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="ImageNPLs" Relationship="Self.FK__ImageNPL__IDNPL__534D60F1" FromRole="NPL" ToRole="ImageNPL" />
+          <NavigationProperty Name="ListNPLs" Relationship="Self.FK__ListNPL__IDNPL__5070F446" FromRole="NPL" ToRole="ListNPL" />
+        </EntityType>
+        <EntityType Name="Product">
+          <Key>
+            <PropertyRef Name="IDPro" />
+          </Key>
+          <Property Name="IDPro" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TenPro" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Notes" Relationship="Self.FK__Note__IDPro__44FF419A" FromRole="Product" ToRole="Note" />
+          <NavigationProperty Name="ProductVariants" Relationship="Self.FK__ProductVa__IDPro__3D5E1FD2" FromRole="Product" ToRole="ProductVariant" />
+        </EntityType>
+        <EntityType Name="ProductVariant">
+          <Key>
+            <PropertyRef Name="IDVariant" />
+          </Key>
+          <Property Name="IDVariant" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDPro" Type="Int32" Nullable="false" />
+          <Property Name="IDSize" Type="Int32" Nullable="false" />
+          <Property Name="IDColor" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Color" Relationship="Self.FK__ProductVa__IDCol__3F466844" FromRole="ProductVariant" ToRole="Color" />
+          <NavigationProperty Name="CTDHs" Relationship="Self.FK__CTDH__IDVariant__4AB81AF0" FromRole="ProductVariant" ToRole="CTDH" />
+          <NavigationProperty Name="Images" Relationship="Self.FK__Image__IDVariant__4222D4EF" FromRole="ProductVariant" ToRole="Image" />
+          <NavigationProperty Name="Product" Relationship="Self.FK__ProductVa__IDPro__3D5E1FD2" FromRole="ProductVariant" ToRole="Product" />
+          <NavigationProperty Name="Size" Relationship="Self.FK__ProductVa__IDSiz__3E52440B" FromRole="ProductVariant" ToRole="Size" />
+        </EntityType>
+        <EntityType Name="Size">
+          <Key>
+            <PropertyRef Name="IDSize" />
+          </Key>
+          <Property Name="IDSize" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TenSize" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="ProductVariants" Relationship="Self.FK__ProductVa__IDSiz__3E52440B" FromRole="Size" ToRole="ProductVariant" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <Association Name="FK__ProductVa__IDCol__3F466844">
+          <End Role="Color" Type="Self.Color" Multiplicity="1" />
+          <End Role="ProductVariant" Type="Self.ProductVariant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Color">
+              <PropertyRef Name="IDColor" />
+            </Principal>
+            <Dependent Role="ProductVariant">
+              <PropertyRef Name="IDColor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__CTDH__IDDH__49C3F6B7">
+          <End Role="DonHang" Type="Self.DonHang" Multiplicity="1" />
+          <End Role="CTDH" Type="Self.CTDH" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DonHang">
+              <PropertyRef Name="IDDH" />
+            </Principal>
+            <Dependent Role="CTDH">
+              <PropertyRef Name="IDDH" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__CTDH__IDVariant__4AB81AF0">
+          <End Role="ProductVariant" Type="Self.ProductVariant" Multiplicity="1" />
+          <End Role="CTDH" Type="Self.CTDH" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductVariant">
+              <PropertyRef Name="IDVariant" />
+            </Principal>
+            <Dependent Role="CTDH">
+              <PropertyRef Name="IDVariant" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ListNPL__IDDH__4F7CD00D">
+          <End Role="DonHang" Type="Self.DonHang" Multiplicity="1" />
+          <End Role="ListNPL" Type="Self.ListNPL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DonHang">
+              <PropertyRef Name="IDDH" />
+            </Principal>
+            <Dependent Role="ListNPL">
+              <PropertyRef Name="IDDH" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Image__IDVariant__4222D4EF">
+          <End Role="ProductVariant" Type="Self.ProductVariant" Multiplicity="1" />
+          <End Role="Image" Type="Self.Image" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductVariant">
+              <PropertyRef Name="IDVariant" />
+            </Principal>
+            <Dependent Role="Image">
+              <PropertyRef Name="IDVariant" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ImageNPL__IDNPL__534D60F1">
+          <End Role="NPL" Type="Self.NPL" Multiplicity="1" />
+          <End Role="ImageNPL" Type="Self.ImageNPL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NPL">
+              <PropertyRef Name="IDNPL" />
+            </Principal>
+            <Dependent Role="ImageNPL">
+              <PropertyRef Name="IDNPL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ListNPL__IDNPL__5070F446">
+          <End Role="NPL" Type="Self.NPL" Multiplicity="1" />
+          <End Role="ListNPL" Type="Self.ListNPL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NPL">
+              <PropertyRef Name="IDNPL" />
+            </Principal>
+            <Dependent Role="ListNPL">
+              <PropertyRef Name="IDNPL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Note__IDPro__44FF419A">
+          <End Role="Product" Type="Self.Product" Multiplicity="1" />
+          <End Role="Note" Type="Self.Note" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="IDPro" />
+            </Principal>
+            <Dependent Role="Note">
+              <PropertyRef Name="IDPro" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductVa__IDPro__3D5E1FD2">
+          <End Role="Product" Type="Self.Product" Multiplicity="1" />
+          <End Role="ProductVariant" Type="Self.ProductVariant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="IDPro" />
+            </Principal>
+            <Dependent Role="ProductVariant">
+              <PropertyRef Name="IDPro" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductVa__IDSiz__3E52440B">
+          <End Role="Size" Type="Self.Size" Multiplicity="1" />
+          <End Role="ProductVariant" Type="Self.ProductVariant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Size">
+              <PropertyRef Name="IDSize" />
+            </Principal>
+            <Dependent Role="ProductVariant">
+              <PropertyRef Name="IDSize" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="QLBanHangEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="C__MigrationHistory" EntityType="Self.C__MigrationHistory" />
+          <EntitySet Name="Colors" EntityType="Self.Color" />
+          <EntitySet Name="CTDHs" EntityType="Self.CTDH" />
+          <EntitySet Name="DonHangs" EntityType="Self.DonHang" />
+          <EntitySet Name="Images" EntityType="Self.Image" />
+          <EntitySet Name="ImageNPLs" EntityType="Self.ImageNPL" />
+          <EntitySet Name="ListNPLs" EntityType="Self.ListNPL" />
+          <EntitySet Name="Notes" EntityType="Self.Note" />
+          <EntitySet Name="NPLs" EntityType="Self.NPL" />
+          <EntitySet Name="Products" EntityType="Self.Product" />
+          <EntitySet Name="ProductVariants" EntityType="Self.ProductVariant" />
+          <EntitySet Name="Sizes" EntityType="Self.Size" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+          <AssociationSet Name="FK__ProductVa__IDCol__3F466844" Association="Self.FK__ProductVa__IDCol__3F466844">
+            <End Role="Color" EntitySet="Colors" />
+            <End Role="ProductVariant" EntitySet="ProductVariants" />
+          </AssociationSet>
+          <AssociationSet Name="FK__CTDH__IDDH__49C3F6B7" Association="Self.FK__CTDH__IDDH__49C3F6B7">
+            <End Role="DonHang" EntitySet="DonHangs" />
+            <End Role="CTDH" EntitySet="CTDHs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__CTDH__IDVariant__4AB81AF0" Association="Self.FK__CTDH__IDVariant__4AB81AF0">
+            <End Role="ProductVariant" EntitySet="ProductVariants" />
+            <End Role="CTDH" EntitySet="CTDHs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ListNPL__IDDH__4F7CD00D" Association="Self.FK__ListNPL__IDDH__4F7CD00D">
+            <End Role="DonHang" EntitySet="DonHangs" />
+            <End Role="ListNPL" EntitySet="ListNPLs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Image__IDVariant__4222D4EF" Association="Self.FK__Image__IDVariant__4222D4EF">
+            <End Role="ProductVariant" EntitySet="ProductVariants" />
+            <End Role="Image" EntitySet="Images" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ImageNPL__IDNPL__534D60F1" Association="Self.FK__ImageNPL__IDNPL__534D60F1">
+            <End Role="NPL" EntitySet="NPLs" />
+            <End Role="ImageNPL" EntitySet="ImageNPLs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ListNPL__IDNPL__5070F446" Association="Self.FK__ListNPL__IDNPL__5070F446">
+            <End Role="NPL" EntitySet="NPLs" />
+            <End Role="ListNPL" EntitySet="ListNPLs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Note__IDPro__44FF419A" Association="Self.FK__Note__IDPro__44FF419A">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="Note" EntitySet="Notes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductVa__IDPro__3D5E1FD2" Association="Self.FK__ProductVa__IDPro__3D5E1FD2">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="ProductVariant" EntitySet="ProductVariants" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductVa__IDSiz__3E52440B" Association="Self.FK__ProductVa__IDSiz__3E52440B">
+            <End Role="Size" EntitySet="Sizes" />
+            <End Role="ProductVariant" EntitySet="ProductVariants" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="QLBanHangModelStoreContainer" CdmEntityContainer="QLBanHangEntities1">
+          <EntitySetMapping Name="C__MigrationHistory">
+            <EntityTypeMapping TypeName="QLBanHangModel.C__MigrationHistory">
+              <MappingFragment StoreEntitySet="__MigrationHistory">
+                <ScalarProperty Name="MigrationId" ColumnName="MigrationId" />
+                <ScalarProperty Name="ContextKey" ColumnName="ContextKey" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Colors">
+            <EntityTypeMapping TypeName="QLBanHangModel.Color">
+              <MappingFragment StoreEntitySet="Color">
+                <ScalarProperty Name="IDColor" ColumnName="IDColor" />
+                <ScalarProperty Name="TenColor" ColumnName="TenColor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CTDHs">
+            <EntityTypeMapping TypeName="QLBanHangModel.CTDH">
+              <MappingFragment StoreEntitySet="CTDH">
+                <ScalarProperty Name="IDCTDH" ColumnName="IDCTDH" />
+                <ScalarProperty Name="IDDH" ColumnName="IDDH" />
+                <ScalarProperty Name="IDVariant" ColumnName="IDVariant" />
+                <ScalarProperty Name="SoLuong" ColumnName="SoLuong" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DonHangs">
+            <EntityTypeMapping TypeName="QLBanHangModel.DonHang">
+              <MappingFragment StoreEntitySet="DonHang">
+                <ScalarProperty Name="IDDH" ColumnName="IDDH" />
+                <ScalarProperty Name="NgayDat" ColumnName="NgayDat" />
+                <ScalarProperty Name="KhachHang" ColumnName="KhachHang" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Images">
+            <EntityTypeMapping TypeName="QLBanHangModel.Image">
+              <MappingFragment StoreEntitySet="Image">
+                <ScalarProperty Name="IDImg" ColumnName="IDImg" />
+                <ScalarProperty Name="URL" ColumnName="URL" />
+                <ScalarProperty Name="IDVariant" ColumnName="IDVariant" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ImageNPLs">
+            <EntityTypeMapping TypeName="QLBanHangModel.ImageNPL">
+              <MappingFragment StoreEntitySet="ImageNPL">
+                <ScalarProperty Name="IDImgNPL" ColumnName="IDImgNPL" />
+                <ScalarProperty Name="URL" ColumnName="URL" />
+                <ScalarProperty Name="IDNPL" ColumnName="IDNPL" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ListNPLs">
+            <EntityTypeMapping TypeName="QLBanHangModel.ListNPL">
+              <MappingFragment StoreEntitySet="ListNPL">
+                <ScalarProperty Name="IDList" ColumnName="IDList" />
+                <ScalarProperty Name="IDDH" ColumnName="IDDH" />
+                <ScalarProperty Name="IDNPL" ColumnName="IDNPL" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Notes">
+            <EntityTypeMapping TypeName="QLBanHangModel.Note">
+              <MappingFragment StoreEntitySet="Note">
+                <ScalarProperty Name="IDNote" ColumnName="IDNote" />
+                <ScalarProperty Name="IDPro" ColumnName="IDPro" />
+                <ScalarProperty Name="NoiDung" ColumnName="NoiDung" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NPLs">
+            <EntityTypeMapping TypeName="QLBanHangModel.NPL">
+              <MappingFragment StoreEntitySet="NPL">
+                <ScalarProperty Name="IDNPL" ColumnName="IDNPL" />
+                <ScalarProperty Name="TenNPL" ColumnName="TenNPL" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Products">
+            <EntityTypeMapping TypeName="QLBanHangModel.Product">
+              <MappingFragment StoreEntitySet="Product">
+                <ScalarProperty Name="IDPro" ColumnName="IDPro" />
+                <ScalarProperty Name="TenPro" ColumnName="TenPro" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProductVariants">
+            <EntityTypeMapping TypeName="QLBanHangModel.ProductVariant">
+              <MappingFragment StoreEntitySet="ProductVariant">
+                <ScalarProperty Name="IDVariant" ColumnName="IDVariant" />
+                <ScalarProperty Name="IDPro" ColumnName="IDPro" />
+                <ScalarProperty Name="IDSize" ColumnName="IDSize" />
+                <ScalarProperty Name="IDColor" ColumnName="IDColor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sizes">
+            <EntityTypeMapping TypeName="QLBanHangModel.Size">
+              <MappingFragment StoreEntitySet="Size">
+                <ScalarProperty Name="IDSize" ColumnName="IDSize" />
+                <ScalarProperty Name="TenSize" ColumnName="TenSize" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="QLBanHangModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

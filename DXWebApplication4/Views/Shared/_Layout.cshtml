@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>@ViewBag.Title</title>
+
+    @Html.DevExpress().GetStyleSheets(
+        new StyleSheet { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+        new StyleSheet { ExtensionSuite = ExtensionSuite.Editors },
+        new StyleSheet { ExtensionSuite = ExtensionSuite.GridView }
+    )
+    @Html.DevExpress().GetScripts(
+        new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+        new Script { ExtensionSuite = ExtensionSuite.Editors },
+        new Script { ExtensionSuite = ExtensionSuite.GridView }
+    )
+
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            font-family: Arial, sans-serif;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #f4f4f4;
+            height: 100vh;
+            padding: 10px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        @Html.DevExpress().NavBar(settings =>
+        {
+            settings.Name = "adminSidebar";
+            settings.Width = Unit.Percentage(100);
+            settings.Groups.Add(group =>
+            {
+                group.Text = "Sản phẩm";
+                group.Items.Add("Thêm mới", "", "", Url.Action("Index", "Product/create"));
+            });
+            settings.Groups.Add(group =>
+            {
+                group.Text = "Người dùng";
+            });
+            settings.Groups.Add(group =>
+            {
+                group.Text = "Báo cáo";
+                group.Items.Add("Đơn Hàng", "", "", Url.Action("Index", "DonHang"));
+            });
+        }).GetHtml()
+    </div>
+
+    <div class="content">
+        @RenderBody()
+    </div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+﻿@model IEnumerable<DXWebApplication4.Models.DonHang>
+@using DevExpress.Web.Mvc
+@using System.Web.UI.WebControls;
+
+@Html.DevExpress().GridView(settings =>
+{
+    
+    settings.Name = "gridDonHang";
+    settings.KeyFieldName = "IDDH";
+    settings.CallbackRouteValues = new { Controller = "DonHang", Action = "GridViewPartial" };
+
+    settings.Theme = "Office365";
+    settings.Settings.VerticalScrollBarMode = ScrollBarMode.Auto;
+    settings.Settings.VerticalScrollableHeight = 400;
+
+    
+    settings.SettingsPager.PageSize = 20;
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.AlwaysShowPager = true;
+    settings.SettingsPager.PageSizeItemSettings.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "10", "20", "50", "100" };
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.Settings.ShowHeaderFilterButton = true;
+    settings.Settings.ShowGroupPanel = true;
+
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "IDDH";
+        column.Caption = "Mã Đơn Hàng"; 
+        column.Width = Unit.Pixel(120);
+        column.Settings.HeaderFilterMode = HeaderFilterMode.List;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "NgayDat";
+        column.Caption = "Ngày Đặt";
+        column.ColumnType = DevExpress.Web.Mvc.MVCxGridViewColumnType.DateEdit;
+        column.Width = Unit.Pixel(150);
+        column.PropertiesEdit.DisplayFormatString = "dd/MM/yyyy";
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "KhachHang";
+        column.Caption = "Khách Hàng";
+        column.Width = Unit.Pixel(250);
+        column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    });
+
+
+    settings.Settings.ShowFooter = true;
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Count, "IDDH").DisplayFormat = "Tổng: {0}";
+
+
+    settings.CommandColumn.Visible = true;
+    settings.CommandColumn.ShowEditButton = true;
+    settings.CommandColumn.ShowDeleteButton = true;
+    settings.CommandColumn.ShowNewButton = true;
+    settings.CommandColumn.Caption = "Thao Tác";
+    settings.CommandColumn.Width = Unit.Pixel(100);
+
+}).Bind(Model).GetHtml()

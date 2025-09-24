@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="353863b64ab64b44a36f5302e5415b8f" Name="Diagram1">
+        <EntityTypeShape EntityType="QLBanHangModel.C__MigrationHistory" Width="1.5" PointX="7.75" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLBanHangModel.Color" Width="1.5" PointX="0.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLBanHangModel.CTDH" Width="1.5" PointX="5.25" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLBanHangModel.DonHang" Width="1.5" PointX="3" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLBanHangModel.Image" Width="1.5" PointX="5.25" PointY="4.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLBanHangModel.ImageNPL" Width="1.5" PointX="8" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLBanHangModel.ListNPL" Width="1.5" PointX="8" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLBanHangModel.Note" Width="1.5" PointX="3" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLBanHangModel.NPL" Width="1.5" PointX="5.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLBanHangModel.Product" Width="1.5" PointX="0.75" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLBanHangModel.ProductVariant" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLBanHangModel.Size" Width="1.5" PointX="0.75" PointY="6.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLBanHangModel.sysdiagram" Width="1.5" PointX="9.75" PointY="1.125" IsExpanded="true" />
+        <AssociationConnector Association="QLBanHangModel.FK__ProductVa__IDCol__3F466844" ManuallyRouted="false" />
+        <AssociationConnector Association="QLBanHangModel.FK__CTDH__IDDH__49C3F6B7" ManuallyRouted="false" />
+        <AssociationConnector Association="QLBanHangModel.FK__CTDH__IDVariant__4AB81AF0" ManuallyRouted="false" />
+        <AssociationConnector Association="QLBanHangModel.FK__ListNPL__IDDH__4F7CD00D" ManuallyRouted="false" />
+        <AssociationConnector Association="QLBanHangModel.FK__Image__IDVariant__4222D4EF" ManuallyRouted="false" />
+        <AssociationConnector Association="QLBanHangModel.FK__ImageNPL__IDNPL__534D60F1" ManuallyRouted="false" />
+        <AssociationConnector Association="QLBanHangModel.FK__ListNPL__IDNPL__5070F446" ManuallyRouted="false" />
+        <AssociationConnector Association="QLBanHangModel.FK__Note__IDPro__44FF419A" ManuallyRouted="false" />
+        <AssociationConnector Association="QLBanHangModel.FK__ProductVa__IDPro__3D5E1FD2" ManuallyRouted="false" />
+        <AssociationConnector Association="QLBanHangModel.FK__ProductVa__IDSiz__3E52440B" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
