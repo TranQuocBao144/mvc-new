@@ -1,0 +1,104 @@
+@model DXWebApplication4.Models.Product
+@using System.Linq
+@using System.Web
+
+@{
+    ViewBag.Title = "Chi tiết sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-card">
+    <h2>Chi tiết sản phẩm</h2>
+    <h3>@Model.TenPro</h3>
+
+    <div style="margin: 16px 0;">
+        @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-default" })
+    </div>
+
+    @Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "gvVariants";
+        settings.KeyFieldName = "IDVariant";
+        settings.CallbackRouteValues = new { Controller = "Product", Action = "Details", id = Model.IDPro };
+        settings.SettingsPager.PageSize = 10;
+        settings.SettingsBehavior.ColumnResizeMode = DevExpress.Web.ColumnResizeMode.Control;
+        settings.Settings.ShowFilterRow = true;
+        settings.SettingsAdaptivity.AdaptivityMode = DevExpress.Web.GridViewAdaptivityMode.Off;
+
+        settings.Columns.Add(c => {
+            c.FieldName = "IDVariant";
+            c.Caption = "Mã biến thể";
+            c.Width = Unit.Pixel(100);
+        });
+        settings.Columns.Add(c => {
+            c.Caption = "Tên sản phẩm";
+            c.UnboundType = DevExpress.Data.UnboundColumnType.String;
+            c.SetDataItemTemplateContent(cell =>
+            {
+                ViewContext.Writer.Write(HttpUtility.HtmlEncode(Model.TenPro));
+            });
+            c.ReadOnly = true;
+            c.Width = Unit.Pixel(200);
+        });
+        settings.Columns.Add(c => {
+            c.Caption = "Size";
+            c.UnboundType = DevExpress.Data.UnboundColumnType.String;
+            c.SetDataItemTemplateContent(cell =>
+            {
+                var sizeName = System.Web.UI.DataBinder.Eval(cell.DataItem, "Size.TenSize") as string;
+                if (!string.IsNullOrEmpty(sizeName))
+                {
+                    ViewContext.Writer.Write(HttpUtility.HtmlEncode(sizeName));
+                }
+            });
+        });
+        settings.Columns.Add(c => {
+            c.Caption = "Color";
+            c.UnboundType = DevExpress.Data.UnboundColumnType.String;
+            c.SetDataItemTemplateContent(cell =>
+            {
+                var colorName = System.Web.UI.DataBinder.Eval(cell.DataItem, "Color.TenColor") as string;
+                if (!string.IsNullOrEmpty(colorName))
+                {
+                    ViewContext.Writer.Write(HttpUtility.HtmlEncode(colorName));
+                }
+            });
+        });
+        settings.Columns.Add(c =>
+        {
+            c.Caption = "Hình ảnh";
+            c.UnboundType = DevExpress.Data.UnboundColumnType.Object;
+            c.SetDataItemTemplateContent(cell =>
+            {
+                int idVariant;
+                if (cell.KeyValue != null && int.TryParse(cell.KeyValue.ToString(), out idVariant))
+                {
+                    var variant = Model.ProductVariants.FirstOrDefault(v => v.IDVariant == idVariant);
+                    if (variant != null)
+                    {
+                        foreach (var img in variant.Images)
+                        {
+                            ViewContext.Writer.Write($"<img src=\"{img.URL}\" alt=\"image\" style=\"height:60px;margin-right:6px;border-radius:4px;border:1px solid #eee;\" />");
+                        }
+                    }
+                }
+            });
+        });
+        settings.Columns.Add(c =>
+        {
+            c.Caption = "Ghi chú (Note)";
+            c.UnboundType = DevExpress.Data.UnboundColumnType.String;
+            c.SetDataItemTemplateContent(cell =>
+            {
+                var notes = Model.Notes; // Notes thuộc Product, hiển thị danh sách link
+                if (notes != null && notes.Any())
+                {
+                    foreach (var note in notes)
+                    {
+                        ViewContext.Writer.Write($"<a href=\"{note.NoiDung}\" target=\"_blank\">Tài liệu</a>&nbsp;");
+                    }
+                }
+            });
+        });
+    }).Bind(Model.ProductVariants).GetHtml()
+</div>

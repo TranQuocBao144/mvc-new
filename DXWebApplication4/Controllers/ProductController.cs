@@ -26,6 +26,7 @@ namespace DXWebApplication4.Controllers
         public ActionResult Create()
         {
             ViewBag.Sizes = new SelectList(_db.Sizes.ToList(), "IDSize", "TenSize");
+            ViewBag.Colors = new SelectList(_db.Colors.ToList(), "IDColor", "TenColor");
             return View();
         }
 
@@ -36,6 +37,7 @@ namespace DXWebApplication4.Controllers
         {
             string productName = form["ProductName"];
             string productSizeId = form["ProductSize"];
+            string productColorId = form["ProductColor"];
 
             HttpPostedFileBase productImage = Request.Files["ProductImage"];
             HttpPostedFileBase productDocument = Request.Files["ProductDocument"];
@@ -48,17 +50,18 @@ namespace DXWebApplication4.Controllers
             var allFiles = Request.Files.AllKeys;
             var filesInfo = string.Join(", ", allFiles.Select(key => $"{key}: {(Request.Files[key] != null && Request.Files[key].ContentLength > 0 ? Request.Files[key].FileName : "null")}"));
 
-            TempData["Debug"] = $"Start Create - ProductName={productName}, ProductSizeId='{productSizeId}' (type: {productSizeId?.GetType().Name}), " +
+            TempData["Debug"] = $"Start Create - ProductName={productName}, ProductSizeId='{productSizeId}' (type: {productSizeId?.GetType().Name}), ProductColorId='{productColorId}', " +
                                 $"All Files: [{filesInfo}], " +
                                 $"DevExImage={(productImage != null ? productImage.FileName : "null")}, " +
                                 $"DevExDoc={(productDocument != null ? productDocument.FileName : "null")}, " +
                                 $"TestImage={(testImage != null ? testImage.FileName : "null")}, " +
                                 $"TestDoc={(testDocument != null ? testDocument.FileName : "null")}";
 
-            if (string.IsNullOrEmpty(productName) || string.IsNullOrEmpty(productSizeId))
+            if (string.IsNullOrEmpty(productName) || string.IsNullOrEmpty(productSizeId) || string.IsNullOrEmpty(productColorId))
             {
-                ModelState.AddModelError("", "Product Name và Size là bắt buộc.");
+                ModelState.AddModelError("", "Product Name, Size và Color là bắt buộc.");
                 ViewBag.Sizes = new SelectList(_db.Sizes.ToList(), "IDSize", "TenSize");
+                ViewBag.Colors = new SelectList(_db.Colors.ToList(), "IDColor", "TenColor");
                 return View();
             }
 
@@ -71,7 +74,7 @@ namespace DXWebApplication4.Controllers
                 int rowsProduct = await _db.SaveChangesAsync();
                 TempData["Debug"] += $" | Saved Product: Rows={rowsProduct}, IDPro={product.IDPro}, TenPro={product.TenPro}";
 
-                // 2. Lấy Size và Color mặc định
+                // 2. Lấy Size và Color được chọn
                 Size sizeEntity = null;
                 
                 // Thử parse như ID trước
@@ -92,16 +95,33 @@ namespace DXWebApplication4.Controllers
                 {
                     TempData["Error"] = $"Size '{productSizeId}' không hợp lệ.";
                     ViewBag.Sizes = new SelectList(_db.Sizes.ToList(), "IDSize", "TenSize");
+                    ViewBag.Colors = new SelectList(_db.Colors.ToList(), "IDColor", "TenColor");
                     return View();
                 }
 
-                // Lấy color mặc định (màu đầu tiên hoặc tạo màu mặc định)
-                var defaultColor = _db.Colors.FirstOrDefault();
-                if (defaultColor == null)
+                // Lấy color được chọn
+                Color selectedColor = null;
+                
+                // Thử parse như ID trước
+                if (int.TryParse(productColorId, out int colorId))
                 {
-                    defaultColor = new Color { TenColor = "Default" };
-                    _db.Colors.Add(defaultColor);
-                    await _db.SaveChangesAsync();
+                    selectedColor = _db.Colors.FirstOrDefault(c => c.IDColor == colorId);
+                    TempData["Debug"] += $" | Tried to find color by ID: {colorId}, Found: {(selectedColor != null ? "Yes" : "No")}";
+                }
+                
+                // Nếu không parse được ID, thử tìm theo tên
+                if (selectedColor == null)
+                {
+                    selectedColor = _db.Colors.FirstOrDefault(c => c.TenColor == productColorId);
+                    TempData["Debug"] += $" | Tried to find color by name: '{productColorId}', Found: {(selectedColor != null ? "Yes" : "No")}";
+                }
+                
+                if (selectedColor == null)
+                {
+                    TempData["Error"] = $"Color '{productColorId}' không hợp lệ.";
+                    ViewBag.Sizes = new SelectList(_db.Sizes.ToList(), "IDSize", "TenSize");
+                    ViewBag.Colors = new SelectList(_db.Colors.ToList(), "IDColor", "TenColor");
+                    return View();
                 }
 
                 // 3. Thêm ProductVariant
@@ -109,7 +129,7 @@ namespace DXWebApplication4.Controllers
                 {
                     IDPro = product.IDPro,
                     IDSize = sizeEntity.IDSize,
-                    IDColor = defaultColor.IDColor
+                    IDColor = selectedColor.IDColor
                 };
                 _db.ProductVariants.Add(variant);
 
@@ -218,6 +238,7 @@ namespace DXWebApplication4.Controllers
             {
                 TempData["Error"] = "Lỗi khi lưu sản phẩm: " + ex.ToString();
                 ViewBag.Sizes = new SelectList(_db.Sizes.ToList(), "IDSize", "TenSize");
+                ViewBag.Colors = new SelectList(_db.Colors.ToList(), "IDColor", "TenColor");
                 return View();
             }
         }
@@ -227,6 +248,25 @@ namespace DXWebApplication4.Controllers
         {
             var products = _db.Products.Include(p => p.ProductVariants).ToList();
             return View(products);
+        }
+
+        // GET: Product/Details/5
+        public ActionResult Details(int id)
+        {
+            var product = _db.Products
+                .Include(p => p.ProductVariants.Select(v => v.Size))
+                .Include(p => p.ProductVariants.Select(v => v.Color))
+                .Include(p => p.ProductVariants.Select(v => v.Images))
+                .Include(p => p.Notes)
+                .FirstOrDefault(p => p.IDPro == id);
+
+            if (product == null)
+            {
+                TempData["Error"] = "Không tìm thấy sản phẩm.";
+                return RedirectToAction("Index");
+            }
+
+            return View(product);
         }
     }
 }

@@ -1,7 +1,8 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>@ViewBag.Title</title>
 
     @Html.DevExpress().GetStyleSheets(
@@ -47,7 +48,9 @@
             {
                 group.Text = "Sản phẩm";
                 group.Items.Add("Thêm mới", "", "", Url.Action("Index", "Product/create"));
+                group.Items.Add("Danh sách sản phẩm", "", "", Url.Action("Index", "Product/Index"));
             });
+
             settings.Groups.Add(group =>
             {
                 group.Text = "Người dùng";

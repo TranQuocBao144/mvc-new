@@ -11,7 +11,7 @@
     @Html.ActionLink("Tạo sản phẩm mới", "Create", null, new { @class = "btn btn-primary" })
 </p>
 
-@if (TempData["Success"] != null)
+<!-- @if (TempData["Success"] != null)
 {
     <div class="alert alert-success">@TempData["Success"]</div>
 }
@@ -24,48 +24,343 @@
 @if (TempData["Debug"] != null)
 {
     <div class="alert alert-info">@TempData["Debug"]</div>
-}
+} -->
 
-<div class="table-responsive">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Tên sản phẩm</th>
-                <th>Số lượng variant</th>
-                <th>Số lượng hình ảnh</th>
-                <th>Số lượng tài liệu</th>
-                <th>Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Model)
-            {
-                <tr>
-                    <td>@product.IDPro</td>
-                    <td>@product.TenPro</td>
-                    <td>@product.ProductVariants.Count</td>
-                    <td>
-                        @{
-                            var imageCount = product.ProductVariants.SelectMany(v => v.Images).Count();
-                        }
-                        @imageCount
-                    </td>
-                    <td>@product.Notes.Count</td>
-                    <td>
-                        @Html.ActionLink("Chi tiết", "Details", new { id = product.IDPro }, new { @class = "btn btn-info btn-sm" }) |
-                        @Html.ActionLink("Sửa", "Edit", new { id = product.IDPro }, new { @class = "btn btn-warning btn-sm" }) |
-                        @Html.ActionLink("Xóa", "Delete", new { id = product.IDPro }, new { @class = "btn btn-danger btn-sm" })
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
+<style>
+    .excel-table-container {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        margin: 20px 0;
+    }
 
-@if (!Model.Any())
-{
-    <div class="alert alert-info">
-        <strong>Thông báo:</strong> Chưa có sản phẩm nào. @Html.ActionLink("Tạo sản phẩm đầu tiên", "Create")
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 0 2px;
+    }
+
+    .table-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #374151;
+        margin: 0;
+    }
+
+    .table-stats {
+        font-size: 0.9rem;
+        color: #6b7280;
+        background: #f9fafb;
+        padding: 6px 12px;
+        border-radius: 4px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .excel-table {
+        width: 100%;
+        background: white;
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid #d1d5db;
+        font-size: 14px;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .excel-table thead {
+        background: #f3f4f6;
+    }
+
+    .excel-table th {
+        padding: 14px 16px;
+        font-weight: 600;
+        font-size: 13px;
+        color: #374151;
+        text-align: left;
+        border-bottom: 2px solid #d1d5db;
+        border-right: 1px solid #e5e7eb;
+        background: #f9fafb;
+    }
+
+    .excel-table th:last-child {
+        border-right: none;
+    }
+
+    .excel-table tbody tr {
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .excel-table tbody tr:nth-child(even) {
+        background-color: #fafafa;
+    }
+
+    .excel-table tbody tr:hover {
+        background: #f0f9ff;
+    }
+
+    .excel-table td {
+        padding: 12px 16px;
+        border-right: 1px solid #f3f4f6;
+        vertical-align: middle;
+        color: #374151;
+    }
+
+    .excel-table td:last-child {
+        border-right: none;
+    }
+
+    /* Column specific styling */
+    .excel-table td:first-child {
+        font-weight: 600;
+        font-family: 'Courier New', monospace;
+        color: #1f2937;
+    }
+
+    .excel-table td:nth-child(2) {
+        font-weight: 500;
+        max-width: 200px;
+    }
+
+    .excel-table td:nth-child(3),
+    .excel-table td:nth-child(4),
+    .excel-table td:nth-child(5) {
+        text-align: center;
+        font-weight: 600;
+    }
+
+    /* Action buttons styling */
+    .action-buttons {
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .action-btn {
+        padding: 6px 12px;
+        border: 1px solid;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.15s ease;
+        cursor: pointer;
+    }
+
+    .btn-info {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+    }
+
+    .btn-info:hover {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: white;
+    }
+
+    .btn-warning {
+        background: #f59e0b;
+        border-color: #f59e0b;
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background: #d97706;
+        border-color: #d97706;
+        color: white;
+    }
+
+    .btn-danger {
+        background: #ef4444;
+        border-color: #ef4444;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+        border-color: #dc2626;
+        color: white;
+    }
+
+    /* Empty state styling */
+    .empty-state {
+        text-align: center;
+        padding: 50px 30px;
+        background: white;
+        border-radius: 6px;
+        border: 2px dashed #d1d5db;
+        margin: 20px 0;
+    }
+
+    .empty-state h3 {
+        color: #374151;
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .empty-state p {
+        color: #6b7280;
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+    }
+
+    .empty-state .btn {
+        background: #3b82f6;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background 0.15s ease;
+        display: inline-block;
+    }
+
+    .empty-state .btn:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+    /* Number badges */
+    .number-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 28px;
+        height: 20px;
+        background: #e5e7eb;
+        color: #374151;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 0 6px;
+    }
+
+    .number-badge:not(.zero) {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    /* Responsive design */
+    @@media (max-width: 1024px) {
+        .excel-table {
+            font-size: 13px;
+        }
+        
+        .excel-table th,
+        .excel-table td {
+            padding: 12px 15px;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .excel-table-container {
+            padding: 15px;
+        }
+        
+        .table-header {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+        
+        .excel-table {
+            font-size: 12px;
+        }
+        
+        .excel-table th,
+        .excel-table td {
+            padding: 10px 12px;
+        }
+        
+        .excel-table td:nth-child(2) {
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+</style>
+
+<div class="excel-table-container">
+    <div class="table-header">
+        <h2 class="table-title">Danh sách sản phẩm</h2>
+        <div class="table-stats">
+            Tổng: @Model.Count() sản phẩm
+        </div>
     </div>
-}
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Số lượng variant</th>
+                        <th>Số lượng hình ảnh</th>
+                        <th>Số lượng tài liệu</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model)
+                    {
+                        <tr>
+                            <td>@product.IDPro</td>
+                            <td>@product.TenPro</td>
+                            <td>
+                                <span class="number-badge @(product.ProductVariants.Count == 0 ? "zero" : "")">
+                                    @product.ProductVariants.Count
+                                </span>
+                            </td>
+                            <td>
+                                @{
+                                    var imageCount = product.ProductVariants.SelectMany(v => v.Images).Count();
+                                }
+                                <span class="number-badge @(imageCount == 0 ? "zero" : "")">
+                                    @imageCount
+                                </span>
+                            </td>
+                            <td>
+                                <span class="number-badge @(product.Notes.Count == 0 ? "zero" : "")">
+                                    @product.Notes.Count
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    @Html.ActionLink("Chi tiết", "Details", new { id = product.IDPro }, new { @class = "action-btn btn-info" })
+                                    @Html.ActionLink("Sửa", "Edit", new { id = product.IDPro }, new { @class = "action-btn btn-warning" })
+                                    @Html.ActionLink("Xóa", "Delete", new { id = product.IDPro }, new { @class = "action-btn btn-danger" })
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <h3>Chưa có sản phẩm nào</h3>
+            <p>Hãy tạo sản phẩm đầu tiên để bắt đầu quản lý danh mục của bạn</p>
+            @Html.ActionLink("Tạo sản phẩm đầu tiên", "Create", null, new { @class = "btn" })
+        </div>
+    }
+</div>

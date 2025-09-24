@@ -261,6 +261,19 @@
                         comboBox.ShowModelErrors = true;
                         comboBox.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithText;
                     });
+                    groupSettings.Items.Add(i =>
+                    {
+                        i.Caption = "Color";
+                        i.NestedExtensionType = FormLayoutNestedExtensionItemType.ComboBox;
+                        var comboBox = (ComboBoxSettings)i.NestedExtensionSettings;
+                        comboBox.Name = "ProductColor";
+                        comboBox.Properties.DataSource = ViewBag.Colors;
+                        comboBox.Properties.ValueField = "Value";
+                        comboBox.Properties.TextField = "Text";
+                        comboBox.Properties.ValidationSettings.RequiredField.IsRequired = true;
+                        comboBox.ShowModelErrors = true;
+                        comboBox.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithText;
+                    });
                 });
 
                 // Nút lưu
