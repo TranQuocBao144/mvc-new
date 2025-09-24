@@ -215,18 +215,20 @@
         {
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true)
-            @*if (TempData["Success"] != null)
-                {
-                    <div class="alert alert-success">@TempData["Success"]</div>
-                }
-                if (TempData["Error"] != null)
-                {
-                    <div class="alert alert-danger">@TempData["Error"]</div>
-                }
-                if (TempData["Debug"] != null)
-                {
-                    <div class="alert alert-info">@TempData["Debug"]</div>
-                }*@
+            if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">@TempData["Success"]</div>
+            }
+            if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Error"]</div>
+            }
+            if (TempData["Debug"] != null)
+            {
+                <div class="alert alert-info" style="white-space:pre-wrap; word-break:break-word;">
+                    @TempData["Debug"]
+                </div>
+            }
 
             <div class="form-section">
                 @(Html.DevExpress().FormLayout(settings => {

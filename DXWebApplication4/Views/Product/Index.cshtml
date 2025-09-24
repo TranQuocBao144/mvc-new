@@ -7,6 +7,14 @@
 
 <h2>Danh sách sản phẩm</h2>
 
+@if (TempData["Debug"] != null)
+{
+    <details style="margin:10px 0;">
+        <summary><strong>Debug</strong> (click để xem/ẩn)</summary>
+        <pre style="white-space:pre-wrap; word-break:break-word; background:#f7f7f7; padding:10px; border-radius:6px;">@TempData["Debug"]</pre>
+    </details>
+}
+
 <p>
     @Html.ActionLink("Tạo sản phẩm mới", "Create", null, new { @class = "btn btn-primary" })
 </p>

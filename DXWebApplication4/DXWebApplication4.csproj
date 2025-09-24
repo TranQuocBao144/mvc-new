@@ -259,6 +259,7 @@
     <Content Include="Models\QLBanHangModel.edmx.diagram">
       <DependentUpon>QLBanHangModel.edmx</DependentUpon>
     </Content>
+    <Content Include="App_Data\doanmusic-c1235-firebase-adminsdk-siavi-faba5c718c.json" />
     <None Include="packages.config" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -346,6 +347,7 @@
     <Compile Include="Models\ProductVariant.cs">
       <DependentUpon>QLBanHangModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ProductViewModel.cs" />
     <Compile Include="Models\QLBanHangModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
