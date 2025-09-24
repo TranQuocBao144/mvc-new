@@ -53,11 +53,7 @@
 
             settings.Groups.Add(group =>
             {
-                group.Text = "Người dùng";
-            });
-            settings.Groups.Add(group =>
-            {
-                group.Text = "Báo cáo";
+                group.Text = "Đơn Hàng";
                 group.Items.Add("Đơn Hàng", "", "", Url.Action("Index", "DonHang"));
             });
         }).GetHtml()

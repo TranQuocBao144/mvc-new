@@ -17,7 +17,7 @@ namespace DXWebApplication4.Controllers
         // Constructor
         public ProductController()
         {
-            string bucketName = "doanmusic-c1235.appspot.com"; // chỉnh lại cho đúng
+            string bucketName = "doanmusic-c1235.appspot.com"; 
             string serviceAccountPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/devexpress-5b0d4-firebase-adminsdk-fbsvc-45eb70e0ae.json");
             _firebaseService = new FirebaseService(bucketName, serviceAccountPath);
         }
@@ -42,11 +42,11 @@ namespace DXWebApplication4.Controllers
             HttpPostedFileBase productImage = Request.Files["ProductImage"];
             HttpPostedFileBase productDocument = Request.Files["ProductDocument"];
             
-            // Test với HTML input
+            
             HttpPostedFileBase testImage = Request.Files["TestImage"];
             HttpPostedFileBase testDocument = Request.Files["TestDocument"];
 
-            // Debug tất cả files được gửi
+            
             var allFiles = Request.Files.AllKeys;
             var filesInfo = string.Join(", ", allFiles.Select(key => $"{key}: {(Request.Files[key] != null && Request.Files[key].ContentLength > 0 ? Request.Files[key].FileName : "null")}"));
 
@@ -67,24 +67,24 @@ namespace DXWebApplication4.Controllers
 
             try
             {
-                // 1. Thêm Product
+               
                 var product = new Product { TenPro = productName };
                 _db.Products.Add(product);
 
                 int rowsProduct = await _db.SaveChangesAsync();
                 TempData["Debug"] += $" | Saved Product: Rows={rowsProduct}, IDPro={product.IDPro}, TenPro={product.TenPro}";
 
-                // 2. Lấy Size và Color được chọn
+                
                 Size sizeEntity = null;
                 
-                // Thử parse như ID trước
+                
                 if (int.TryParse(productSizeId, out int sizeId))
                 {
                     sizeEntity = _db.Sizes.FirstOrDefault(s => s.IDSize == sizeId);
                     TempData["Debug"] += $" | Tried to find size by ID: {sizeId}, Found: {(sizeEntity != null ? "Yes" : "No")}";
                 }
                 
-                // Nếu không parse được ID, thử tìm theo tên
+                
                 if (sizeEntity == null)
                 {
                     sizeEntity = _db.Sizes.FirstOrDefault(s => s.TenSize == productSizeId);
@@ -99,17 +99,17 @@ namespace DXWebApplication4.Controllers
                     return View();
                 }
 
-                // Lấy color được chọn
+                
                 Color selectedColor = null;
                 
-                // Thử parse như ID trước
+                
                 if (int.TryParse(productColorId, out int colorId))
                 {
                     selectedColor = _db.Colors.FirstOrDefault(c => c.IDColor == colorId);
                     TempData["Debug"] += $" | Tried to find color by ID: {colorId}, Found: {(selectedColor != null ? "Yes" : "No")}";
                 }
                 
-                // Nếu không parse được ID, thử tìm theo tên
+                
                 if (selectedColor == null)
                 {
                     selectedColor = _db.Colors.FirstOrDefault(c => c.TenColor == productColorId);
@@ -124,7 +124,6 @@ namespace DXWebApplication4.Controllers
                     return View();
                 }
 
-                // 3. Thêm ProductVariant
                 var variant = new ProductVariant
                 {
                     IDPro = product.IDPro,
@@ -136,96 +135,73 @@ namespace DXWebApplication4.Controllers
                 int rowsVariant = await _db.SaveChangesAsync();
                 TempData["Debug"] += $" | Saved Variant: Rows={rowsVariant}, IDVariant={variant.IDVariant}";
 
-                // 4. Upload Image - Thử nhiều cách
-                HttpPostedFileBase imageFile = null;
-                
-                // Ưu tiên test image nếu có
-                if (testImage != null && testImage.ContentLength > 0)
+                var imageFiles = new System.Collections.Generic.List<HttpPostedFileBase>();
+
+                for (int i = 0; i < Request.Files.Count; i++)
                 {
-                    imageFile = testImage;
-                    TempData["Debug"] += $" | Using TestImage: {testImage.FileName}";
-                }
-                else if (productImage != null && productImage.ContentLength > 0)
-                {
-                    imageFile = productImage;
-                    TempData["Debug"] += $" | Using DevExImage: {productImage.FileName}";
-                }
-                else
-                {
-                    // Thử tìm file image với các tên khác nhau
-                    var possibleImageNames = new[] { "ProductImage", "ProductImage_0", "ProductImage$0" };
-                    foreach (var name in possibleImageNames)
+                    var key = Request.Files.GetKey(i);
+                    var file = Request.Files[i];
+                    if (file == null || file.ContentLength <= 0) continue;
+                    if (key == "TestImages" || key == "TestImage" || key == "ProductImage" || (key != null && key.StartsWith("ProductImage")))
                     {
-                        var file = Request.Files[name];
-                        if (file != null && file.ContentLength > 0)
-                        {
-                            imageFile = file;
-                            TempData["Debug"] += $" | Found image with name: {name}";
-                            break;
-                        }
+                        imageFiles.Add(file);
                     }
                 }
 
-                if (imageFile != null)
+                if (imageFiles.Count == 0)
                 {
-                    var imageUrl = await _firebaseService.UploadFileAsync(imageFile.InputStream, imageFile.FileName, "images");
+                    if (testImage != null && testImage.ContentLength > 0) imageFiles.Add(testImage);
+                    if (productImage != null && productImage.ContentLength > 0) imageFiles.Add(productImage);
+                }
+
+                foreach (var imgFile in imageFiles)
+                {
+                    var imageUrl = await _firebaseService.UploadFileAsync(imgFile.InputStream, imgFile.FileName, "images");
                     var image = new Image
                     {
                         IDVariant = variant.IDVariant,
                         URL = imageUrl
                     };
                     _db.Images.Add(image);
-                    TempData["Debug"] += $" | Added Image: {imageUrl} (from file: {imageFile.FileName})";
+                    TempData["Debug"] += $" | Added Image: {imageUrl} (from file: {imgFile.FileName})";
                 }
-                else
+                if (imageFiles.Count == 0)
                 {
-                    TempData["Debug"] += $" | No image file found";
+                    TempData["Debug"] += " | No image files found";
                 }
 
-                // 5. Upload Document - Thử nhiều cách
-                HttpPostedFileBase documentFile = null;
-                
-                // Ưu tiên test document nếu có
-                if (testDocument != null && testDocument.ContentLength > 0)
+                var documentFiles = new System.Collections.Generic.List<HttpPostedFileBase>();
+                for (int i = 0; i < Request.Files.Count; i++)
                 {
-                    documentFile = testDocument;
-                    TempData["Debug"] += $" | Using TestDocument: {testDocument.FileName}";
-                }
-                else if (productDocument != null && productDocument.ContentLength > 0)
-                {
-                    documentFile = productDocument;
-                    TempData["Debug"] += $" | Using DevExDocument: {productDocument.FileName}";
-                }
-                else
-                {
-                    // Thử tìm file document với các tên khác nhau
-                    var possibleDocNames = new[] { "ProductDocument", "ProductDocument_0", "ProductDocument$0" };
-                    foreach (var name in possibleDocNames)
+                    var key = Request.Files.GetKey(i);
+                    var file = Request.Files[i];
+                    if (file == null || file.ContentLength <= 0) continue;
+                    if (key == "TestDocuments" || key == "TestDocument" || key == "ProductDocument" || (key != null && key.StartsWith("ProductDocument")))
                     {
-                        var file = Request.Files[name];
-                        if (file != null && file.ContentLength > 0)
-                        {
-                            documentFile = file;
-                            TempData["Debug"] += $" | Found document with name: {name}";
-                            break;
-                        }
+                        documentFiles.Add(file);
                     }
                 }
 
-                if (documentFile != null)
+                if (documentFiles.Count == 0)
                 {
-                    var noteUrl = await _firebaseService.UploadFileNoteAsync(documentFile.InputStream, documentFile.FileName, "notes");
+                    if (testDocument != null && testDocument.ContentLength > 0) documentFiles.Add(testDocument);
+                    if (productDocument != null && productDocument.ContentLength > 0) documentFiles.Add(productDocument);
+                }
+
+                foreach (var docFile in documentFiles)
+                {
+                    var noteUrl = await _firebaseService.UploadFileNoteAsync(docFile.InputStream, docFile.FileName, "notes");
                     var note = new Note
                     {
                         IDPro = product.IDPro,
                         NoiDung = noteUrl
                     };
                     _db.Notes.Add(note);
-                    TempData["Debug"] += $" | Added Note: {noteUrl} (from file: {documentFile.FileName})";
+                    TempData["Debug"] += $" | Added Note: {noteUrl} (from file: {docFile.FileName})";
                 }
-                else
+                if (documentFiles.Count == 0)
                 {
-                    TempData["Debug"] += $" | No document file found";
+                    TempData["Debug"] += " | No document files found";
                 }
 
                 int rowsFinal = await _db.SaveChangesAsync();
