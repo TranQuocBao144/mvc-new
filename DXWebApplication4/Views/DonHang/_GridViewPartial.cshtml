@@ -1,10 +1,10 @@
-﻿@model IEnumerable<DXWebApplication4.Models.DonHang>
+﻿﻿@model IEnumerable<DXWebApplication4.Models.DonHang>
 @using DevExpress.Web.Mvc
 @using System.Web.UI.WebControls;
 
 @Html.DevExpress().GridView(settings =>
 {
-    
+
     settings.Name = "gridDonHang";
     settings.KeyFieldName = "IDDH";
     settings.CallbackRouteValues = new { Controller = "DonHang", Action = "GridViewPartial" };
@@ -13,7 +13,7 @@
     settings.Settings.VerticalScrollBarMode = ScrollBarMode.Auto;
     settings.Settings.VerticalScrollableHeight = 400;
 
-    
+
     settings.SettingsPager.PageSize = 20;
     settings.SettingsPager.Visible = true;
     settings.SettingsPager.AlwaysShowPager = true;
@@ -29,7 +29,7 @@
     settings.Columns.Add(column =>
     {
         column.FieldName = "IDDH";
-        column.Caption = "Mã Đơn Hàng"; 
+        column.Caption = "Mã Đơn Hàng";
         column.Width = Unit.Pixel(120);
         column.Settings.HeaderFilterMode = HeaderFilterMode.List;
     });
@@ -62,5 +62,10 @@
     settings.CommandColumn.ShowNewButton = true;
     settings.CommandColumn.Caption = "Thao Tác";
     settings.CommandColumn.Width = Unit.Pixel(100);
+
+    settings.ClientSideEvents.RowClick = "function(s, e) { " +
+        "var id = s.GetRowKey(e.visibleIndex);" +
+        "window.location = '/DonHang/Details/' + id;" +
+    "}";
 
 }).Bind(Model).GetHtml()

@@ -293,6 +293,7 @@
     <Content Include="Views\DonHang\Index.cshtml" />
     <Content Include="Views\DonHang\_GridViewPartial.cshtml" />
     <Content Include="Views\Product\Create.cshtml" />
+    <Content Include="Views\DonHang\Details.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -335,6 +336,7 @@
     <Compile Include="Models\DonHang.cs">
       <DependentUpon>QLBanHangModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\DonHangViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Image.cs">
       <DependentUpon>QLBanHangModel.tt</DependentUpon>
