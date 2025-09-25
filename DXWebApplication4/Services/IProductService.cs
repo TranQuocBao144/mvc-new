@@ -1,9 +1,9 @@
 ﻿using DXWebApplication4.Models;
 using DXWebApplication4.Repository;
-using DXWebApplication4.Services;
 using System;
-using System.Collections.Generic;
 using System.IO;
+using DXWebApplication4.Services;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -39,47 +39,47 @@ namespace DXWebApplication4.Services
         public IEnumerable<Size> GetSizes() => _productRepo.GetSizes();
         public IEnumerable<Color> GetColors() => _productRepo.GetColors();
 
-        public async Task CreateProductAsync(ProductViewModel model, IEnumerable<HttpPostedFileBase> files)
+       public async Task CreateProductAsync(ProductViewModel model, IEnumerable<HttpPostedFileBase> files)
+{
+    var sizeEntity = int.TryParse(model.ProductSize, out var sizeId)
+        ? _productRepo.GetSizes().FirstOrDefault(s => s.IDSize == sizeId)
+        : _productRepo.GetSizes().FirstOrDefault(s => s.TenSize == model.ProductSize);
+
+    var colorEntity = int.TryParse(model.ProductColor, out var colorId)
+        ? _productRepo.GetColors().FirstOrDefault(c => c.IDColor == colorId)
+        : _productRepo.GetColors().FirstOrDefault(c => c.TenColor == model.ProductColor);
+
+    if (sizeEntity == null || colorEntity == null)
+        throw new Exception("Size hoặc Color không hợp lệ.");
+
+    var product = new Product { TenPro = model.ProductName };
+    await _productRepo.AddAsync(product);
+
+    var variant = new ProductVariant
+    {
+        IDPro = product.IDPro,
+        IDSize = sizeEntity.IDSize,
+        IDColor = colorEntity.IDColor
+    };
+    await _productRepo.AddVariantAsync(variant);
+
+    foreach (var file in files)
+    {
+        var ext = Path.GetExtension(file.FileName)?.ToLowerInvariant();
+        var ct = (file.ContentType ?? string.Empty).ToLowerInvariant();
+
+        if (ct.StartsWith("image/") || new[] { ".jpg", ".jpeg", ".png", ".gif" }.Contains(ext))
         {
-            var sizeEntity = int.TryParse(model.ProductSize, out var sizeId)
-                ? _productRepo.GetSizes().FirstOrDefault(s => s.IDSize == sizeId)
-                : _productRepo.GetSizes().FirstOrDefault(s => s.TenSize == model.ProductSize);
-
-            var colorEntity = int.TryParse(model.ProductColor, out var colorId)
-                ? _productRepo.GetColors().FirstOrDefault(c => c.IDColor == colorId)
-                : _productRepo.GetColors().FirstOrDefault(c => c.TenColor == model.ProductColor);
-
-            if (sizeEntity == null || colorEntity == null)
-                throw new Exception("Size hoặc Color không hợp lệ.");
-
-            var product = new Product { TenPro = model.ProductName };
-            await _productRepo.AddAsync(product);
-
-            var variant = new ProductVariant
-            {
-                IDPro = product.IDPro,
-                IDSize = sizeEntity.IDSize,
-                IDColor = colorEntity.IDColor
-            };
-            await _productRepo.AddVariantAsync(variant);
-
-            foreach (var file in files)
-            {
-                var ext = Path.GetExtension(file.FileName)?.ToLowerInvariant();
-                var ct = (file.ContentType ?? string.Empty).ToLowerInvariant();
-
-                if (ct.StartsWith("image/") || new[] { ".jpg", ".jpeg", ".png", ".gif" }.Contains(ext))
-                {
-                    var imageUrl = await _firebase.UploadFileAsync(file.InputStream, file.FileName, "images");
-                    await _productRepo.AddImageAsync(new Image { IDVariant = variant.IDVariant, URL = imageUrl });
-                }
-                else if (new[] { ".pdf", ".doc", ".docx", ".xls", ".xlsx" }.Contains(ext))
-                {
-                    var noteUrl = await _firebase.UploadFileNoteAsync(file.InputStream, file.FileName, "notes");
-                    await _productRepo.AddNoteAsync(new Note { IDPro = product.IDPro, NoiDung = noteUrl });
-                }
-            }
+            var imageUrl = await _firebase.UploadFileAsync(file.InputStream, file.FileName, "images");
+            await _productRepo.AddImageAsync(new Image { IDVariant = variant.IDVariant, URL = imageUrl });
         }
+        else if (new[] { ".pdf", ".doc", ".docx", ".xls", ".xlsx" }.Contains(ext))
+        {
+            var noteUrl = await _firebase.UploadFileNoteAsync(file.InputStream, file.FileName, "notes");
+            await _productRepo.AddNoteAsync(new Note { IDPro = product.IDPro, NoiDung = noteUrl });
+        }
+    }
+}
 
     }
 }
