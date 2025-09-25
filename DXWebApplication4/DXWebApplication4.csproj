@@ -293,6 +293,7 @@
     <Content Include="Views\DonHang\Index.cshtml" />
     <Content Include="Views\DonHang\_GridViewPartial.cshtml" />
     <Content Include="Views\Product\Create.cshtml" />
+    <Content Include="Views\DonHang\Details.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
