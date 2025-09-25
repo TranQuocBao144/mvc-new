@@ -12,20 +12,38 @@
             font-family: 'Roboto', sans-serif;
             text-align: center;
         }
+
+        .btn-back {
+            margin: 15px 0;
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #ffbe76;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+            .btn-back:hover {
+                background-color: #f0932b;
+            }
     </style>
 </head>
 
 <body>
     <h2>Chi Tiết Đơn Hàng</h2>
-</body>
-@Html.DevExpress().GridView(settings =>
+
+    <!-- Nút Back -->
+    <a href="@Url.Action("Index", "DonHang")" class="btn-back">
+        &larr; Quay lại
+    </a>
+    @Html.DevExpress().GridView(settings =>
 {
     settings.Name = "gridDonHang";
     settings.KeyFieldName = "IDDH";
 
     settings.Theme = "Office365";
     settings.Settings.VerticalScrollBarMode = ScrollBarMode.Auto;
-    settings.Settings.VerticalScrollableHeight = 400;
+    settings.Settings.VerticalScrollableHeight = 240;
 
     settings.Styles.Header.BackColor = System.Drawing.ColorTranslator.FromHtml("#ff9f43");
     settings.Styles.Header.ForeColor = System.Drawing.Color.White;
@@ -130,9 +148,9 @@
                 c.FieldName = s;
                 c.Caption = s;
                 c.Width = 48;
-                c.CellStyle.HorizontalAlign = System.Web.UI.WebControls.HorizontalAlign.Right;
                 c.Settings.AllowHeaderFilter = DefaultBoolean.False;
                 c.Settings.AllowAutoFilter = DefaultBoolean.False;
+                c.CellStyle.HorizontalAlign = System.Web.UI.WebControls.HorizontalAlign.Center;
 
             });
         }
@@ -142,11 +160,16 @@
         c.FieldName = "TongSoLuong";
         c.Caption = "Tổng";
         c.Width = 60;
-        c.CellStyle.HorizontalAlign = System.Web.UI.WebControls.HorizontalAlign.Right;
+        c.CellStyle.HorizontalAlign = System.Web.UI.WebControls.HorizontalAlign.Center;
         c.Settings.AllowHeaderFilter = DefaultBoolean.False;
         c.Settings.AllowAutoFilter = DefaultBoolean.False;
 
     });
+    settings.Styles.Footer.BackColor = System.Drawing.ColorTranslator.FromHtml("#ffd699");
+    settings.Styles.Footer.ForeColor = System.Drawing.Color.Black;
+    settings.Styles.Footer.Font.Bold = true;
+
+    settings.Styles.Footer.HorizontalAlign = HorizontalAlign.Center;
 
     settings.Settings.ShowFooter = true;
     settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "XXS").DisplayFormat = "{0:n0}";
@@ -164,12 +187,6 @@
     settings.Styles.Cell.Border.BorderColor = System.Drawing.Color.LightGray;
     settings.Styles.Cell.Border.BorderStyle = System.Web.UI.WebControls.BorderStyle.Solid;
     settings.Styles.Cell.Border.BorderWidth = System.Web.UI.WebControls.Unit.Pixel(1);
-
-    settings.CommandColumn.Visible = true;
-    settings.CommandColumn.ShowEditButton = true;
-    settings.CommandColumn.ShowDeleteButton = true;
-    settings.CommandColumn.ShowNewButton = true;
-    settings.CommandColumn.Caption = "Thao Tác";
 
     settings.CommandColumn.Width = Unit.Pixel(100);
 

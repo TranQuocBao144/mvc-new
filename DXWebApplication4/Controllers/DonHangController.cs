@@ -37,7 +37,7 @@ namespace DXWebApplication4.Controllers
                         join c in db.Colors on pv.IDColor equals c.IDColor
                         join s in db.Sizes on pv.IDSize equals s.IDSize
                         join img in db.Images on pv.IDVariant equals img.IDVariant into imgs
-                        from i in imgs.DefaultIfEmpty() // left join để lấy ảnh nếu có
+                        from i in imgs.DefaultIfEmpty()
                         where dh.IDDH == id
                         select new
                         {
