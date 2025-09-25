@@ -1,10 +1,8 @@
-﻿@model IEnumerable<DXWebApplication4.Models.DonHang>
+﻿@model IEnumerable<DXWebApplication4.Models.DonHangViewModel>
 @using DevExpress.Web.Mvc
 @using System.Web.UI.WebControls;
-
 @Html.DevExpress().GridView(settings =>
 {
-    
     settings.Name = "gridDonHang";
     settings.KeyFieldName = "IDDH";
     settings.CallbackRouteValues = new { Controller = "DonHang", Action = "GridViewPartial" };
@@ -13,9 +11,18 @@
     settings.Settings.VerticalScrollBarMode = ScrollBarMode.Auto;
     settings.Settings.VerticalScrollableHeight = 400;
 
-    
-    settings.SettingsPager.PageSize = 20;
+    settings.Styles.Header.BackColor = System.Drawing.ColorTranslator.FromHtml("#ff9f43");
+    settings.Styles.Header.ForeColor = System.Drawing.Color.White;
+    settings.Styles.Header.Font.Bold = true;
+    settings.Styles.Header.HorizontalAlign = System.Web.UI.WebControls.HorizontalAlign.Center;
+    settings.Styles.Header.VerticalAlign = System.Web.UI.WebControls.VerticalAlign.Middle;
+
+    settings.Styles.Cell.VerticalAlign = System.Web.UI.WebControls.VerticalAlign.Middle;
+    settings.Styles.Cell.HorizontalAlign = System.Web.UI.WebControls.HorizontalAlign.Center;
+    settings.Styles.Cell.Paddings.Padding = System.Web.UI.WebControls.Unit.Pixel(5);
+
     settings.SettingsPager.Visible = true;
+    settings.SettingsPager.PageSize = 10;
     settings.SettingsPager.AlwaysShowPager = true;
     settings.SettingsPager.PageSizeItemSettings.Visible = true;
     settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "10", "20", "50", "100" };
@@ -26,41 +33,129 @@
     settings.Settings.ShowGroupPanel = true;
 
 
-    settings.Columns.Add(column =>
+    settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "DonHang", Action = "GridViewPartialAddNew" };
+    settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "DonHang", Action = "GridViewPartialUpdate" };
+    settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "DonHang", Action = "GridViewPartialDelete" };
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+
+
+
+    settings.Columns.Add(c =>
     {
-        column.FieldName = "IDDH";
-        column.Caption = "Mã Đơn Hàng"; 
-        column.Width = Unit.Pixel(120);
-        column.Settings.HeaderFilterMode = HeaderFilterMode.List;
+        c.FieldName = "IDDH";
+        c.Caption = "Mã ĐH";
+        c.Width = Unit.Pixel(80);
+        c.Settings.HeaderFilterMode = HeaderFilterMode.List;
     });
 
-    settings.Columns.Add(column =>
+    settings.Columns.Add(c =>
     {
-        column.FieldName = "NgayDat";
-        column.Caption = "Ngày Đặt";
-        column.ColumnType = DevExpress.Web.Mvc.MVCxGridViewColumnType.DateEdit;
-        column.Width = Unit.Pixel(150);
-        column.PropertiesEdit.DisplayFormatString = "dd/MM/yyyy";
+        c.FieldName = "NgayDat";
+        c.Caption = "Ngày Đặt";
+        c.ColumnType = MVCxGridViewColumnType.DateEdit;
+        c.PropertiesEdit.DisplayFormatString = "dd/MM/yyyy";
+        c.Width = Unit.Pixel(100);
     });
 
-    settings.Columns.Add(column =>
+    settings.Columns.Add(c =>
     {
-        column.FieldName = "KhachHang";
-        column.Caption = "Khách Hàng";
-        column.Width = Unit.Pixel(250);
-        column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        c.FieldName = "KhachHang";
+        c.Caption = "Khách Hàng";
+        c.Width = Unit.Pixel(120);
     });
 
+    settings.Columns.Add(c => { c.FieldName = "Color"; c.Caption = "Màu"; c.Width = 120; c.CellStyle.HorizontalAlign = System.Web.UI.WebControls.HorizontalAlign.Left; });
+
+    settings.Columns.Add(c =>
+    {
+        c.FieldName = "Caption";
+        c.Caption = "Hình Ảnh";
+        c.Width = 100;
+        c.SetDataItemTemplateContent(content =>
+        {
+            var imageUrl = DataBinder.Eval(content.DataItem, "URL");
+            if (imageUrl != null)
+            {
+                Html.ViewContext.Writer.Write(
+                    $"<img src='{imageUrl}' style='max-width:80px; max-height:80px; border-radius:6px;' />"
+                );
+            }
+        });
+    });
+
+    settings.Columns.Add(c =>
+    {
+        c.FieldName = "Caption";
+        c.Caption = "File";
+        c.Width = 120;
+        c.SetDataItemTemplateContent(content =>
+        {
+            var fileUrl = DataBinder.Eval(content.DataItem, "URL");
+            if (fileUrl != null)
+            {
+                Html.ViewContext.Writer.Write(
+                    $"<a href='{fileUrl}' target='_blank' style='color:#2980b9; text-decoration:none;'>Tải File</a>"
+                );
+            }
+        });
+    });
+
+    settings.Columns.AddBand(band =>
+    {
+        band.Caption = "Size";
+        band.HeaderStyle.HorizontalAlign = System.Web.UI.WebControls.HorizontalAlign.Center;
+
+        string[] sizes = { "XXS", "XSM", "SM", "MED", "LRG", "XLG", "XXL" };
+        foreach (var s in sizes)
+        {
+            band.Columns.Add(c =>
+            {
+                c.FieldName = s;
+                c.Caption = s;
+                c.Width = 48;
+                c.CellStyle.HorizontalAlign = System.Web.UI.WebControls.HorizontalAlign.Right;
+                c.Settings.AllowHeaderFilter = DefaultBoolean.False;
+                c.Settings.AllowAutoFilter = DefaultBoolean.False;
+
+            });
+        }
+    });
+    settings.Columns.Add(c =>
+    {
+        c.FieldName = "TongSoLuong";
+        c.Caption = "Tổng";
+        c.Width = 60;
+        c.CellStyle.HorizontalAlign = System.Web.UI.WebControls.HorizontalAlign.Right;
+        c.Settings.AllowHeaderFilter = DefaultBoolean.False;
+        c.Settings.AllowAutoFilter = DefaultBoolean.False;
+
+    });
 
     settings.Settings.ShowFooter = true;
-    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Count, "IDDH").DisplayFormat = "Tổng: {0}";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "XXS").DisplayFormat = "{0:n0}";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "XSM").DisplayFormat = "{0:n0}";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "SM").DisplayFormat = "{0:n0}";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "MED").DisplayFormat = "{0:n0}";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "LRG").DisplayFormat = "{0:n0}";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "XLG").DisplayFormat = "{0:n0}";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "XXL").DisplayFormat = "{0:n0}";
 
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "TongSoLuong").DisplayFormat = "{0:n0}";
+
+    settings.Styles.Footer.Font.Bold = true;
+    settings.Styles.Footer.BackColor = System.Drawing.ColorTranslator.FromHtml("#ecf0f1");
+    settings.Styles.Cell.Border.BorderColor = System.Drawing.Color.LightGray;
+    settings.Styles.Cell.Border.BorderStyle = System.Web.UI.WebControls.BorderStyle.Solid;
+    settings.Styles.Cell.Border.BorderWidth = System.Web.UI.WebControls.Unit.Pixel(1);
 
     settings.CommandColumn.Visible = true;
     settings.CommandColumn.ShowEditButton = true;
     settings.CommandColumn.ShowDeleteButton = true;
     settings.CommandColumn.ShowNewButton = true;
     settings.CommandColumn.Caption = "Thao Tác";
+
     settings.CommandColumn.Width = Unit.Pixel(100);
+
 
 }).Bind(Model).GetHtml()

@@ -335,6 +335,7 @@
     <Compile Include="Models\DonHang.cs">
       <DependentUpon>QLBanHangModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\DonHangViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Image.cs">
       <DependentUpon>QLBanHangModel.tt</DependentUpon>

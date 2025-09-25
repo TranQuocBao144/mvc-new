@@ -1,8 +1,20 @@
-﻿@model IEnumerable<DXWebApplication4.Models.DonHang>
+﻿@model IEnumerable<DXWebApplication4.Models.DonHangViewModel>
 
 @{
     ViewBag.Title = "Danh sách Đơn hàng";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        h2 {
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+        }
+    </style>
+</head>
 
+<body>
+    <h2>Danh Sách Đơn Hàng</h2>
+</body>
 @Html.Partial("_GridViewPartial", Model)
