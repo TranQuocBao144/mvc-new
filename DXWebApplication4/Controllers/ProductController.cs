@@ -99,7 +99,6 @@ namespace DXWebApplication4.Controllers
             var files = Request.Files.AllKeys
                 .Select(k => Request.Files[k])
                 .Where(f => f != null && f.ContentLength > 0);
-
             try
             {
                 await _productService.UpdateVariantAsync(SelectedVariantId, IDPro, SelectedSize.Value, SelectedColor.Value, files,TenPro);
