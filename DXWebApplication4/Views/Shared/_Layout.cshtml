@@ -16,51 +16,181 @@
         new Script { ExtensionSuite = ExtensionSuite.GridView }
     )
 
+    <!-- FontAwesome cho icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         body {
             margin: 0;
             display: flex;
-            font-family: Arial, sans-serif;
+            font-family: Roboto, sans-serif;
+            background: #f8f9fa;
         }
 
         .sidebar {
-            width: 220px;
-            background-color: #f4f4f4;
+            width: 240px;
+            background: #ffffff;
             height: 100vh;
-            padding: 10px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            border-right: 1px solid #e5e5e5;
         }
+
+            .sidebar.hidden {
+                margin-left: -240px;
+            }
+
+                .sidebar.hidden ~ .content {
+                    margin-left: 0;
+                }
+
+        .sidebar-header {
+            background: #EF7722;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+
+            .sidebar-header button {
+                position: absolute;
+                right: 15px;
+                top: 12px;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 20px;
+                cursor: pointer;
+            }
+
+        .sidebar-content .dxnb-content {
+            padding: 0 !important;
+        }
+
+        .dxnb-groupHeader {
+            background: #f1f1f1 !important;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 10px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .dxnb-item {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+            .dxnb-item a {
+                display: flex !important;
+                align-items: center;
+                padding: 12px 16px;
+                text-decoration: none !important;
+                color: #333 !important;
+                font-size: 15px;
+                transition: background 0.2s, color 0.2s;
+            }
+
+                .dxnb-item a:hover {
+                    background: #EF7722 !important;
+                    color: #FFFCFB !important;
+                }
+
+                .dxnb-item a i {
+                    margin-right: 10px;
+                    font-size: 16px;
+                    color: #888;
+                    transition: color 0.2s;
+                }
+
+                .dxnb-item a:hover i {
+                    color: #EF7722;
+                }
 
         .content {
             flex: 1;
             padding: 20px;
+            margin-left: 240px;
+            transition: margin-left 0.3s ease;
         }
+
+        #openMenuBtn {
+            background-color: #EF7722;
+            color: white;
+            border: none;
+            font-size: 20px;
+            padding: 12px 16px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+            #openMenuBtn:hover {
+                background-color: #F3A26D;
+            }
     </style>
 </head>
 
 <body>
-    <div class="sidebar">
-        @Html.DevExpress().NavBar(settings =>
-        {
-            settings.Name = "adminSidebar";
-            settings.Width = Unit.Percentage(100);
-            settings.Groups.Add(group =>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            MENU
+            <button id="closeMenuBtn" onclick="toggleSidebar(false)">✖</button>
+        </div>
+        <div class="sidebar-content">
+            @Html.DevExpress().NavBar(settings =>
             {
-                group.Text = "Sản phẩm";
-                group.Items.Add("Thêm mới", "", "", Url.Action("Index", "Product/create"));
-                group.Items.Add("Danh sách sản phẩm", "", "", Url.Action("Index", "Product/Index"));
-            });
+                settings.Name = "adminSidebar";
+                settings.Width = Unit.Percentage(100);
 
-            settings.Groups.Add(group =>
-            {
-                group.Text = "Đơn Hàng";
-                group.Items.Add("Đơn Hàng", "", "", Url.Action("Index", "DonHang"));
-            });
-        }).GetHtml()
+                settings.Groups.Add(group =>
+                {
+                    group.Text = "Sản phẩm";
+                    group.Items.Add("Thêm mới", "fa fa-plus", "", Url.Action("Create", "Product"));
+                    group.Items.Add("Danh sách sản phẩm", "fa fa-list", "", Url.Action("Index", "Product"));
+                });
+
+                settings.Groups.Add(group =>
+                {
+                    group.Text = "Đơn Hàng";
+                    group.Items.Add("Đơn Hàng", "fa fa-shopping-cart", "", Url.Action("Index", "DonHang"));
+                });
+
+                settings.Groups.Add(group =>
+                {
+                    group.Text = "Nguyên Phụ Liệu";
+                    group.Items.Add("Danh sách NPL", "fa fa-clipboard-list", "", Url.Action("Index", "NPL"));
+                    group.Items.Add("Thêm NPL", "fa fa-plus-circle", "", Url.Action("Create", "NPL"));
+                });
+            }).GetHtml()
+        </div>
     </div>
 
     <div class="content">
+        <button id="openMenuBtn" onclick="toggleSidebar(true)">☰</button>
         @RenderBody()
     </div>
+
+    <script>
+        function toggleSidebar(open) {
+            const sidebar = document.getElementById("sidebar");
+            const openBtn = document.getElementById("openMenuBtn");
+
+            if (open) {
+                sidebar.classList.remove("hidden");
+                openBtn.style.display = "none";
+            } else {
+                sidebar.classList.add("hidden");
+                openBtn.style.display = "inline-block";
+            }
+        }
+        document.getElementById("openMenuBtn").style.display = "none";
+    </script>
 </body>
 </html>
