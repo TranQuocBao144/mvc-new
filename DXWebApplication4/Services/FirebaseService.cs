@@ -35,39 +35,29 @@ namespace DXWebApplication4.Services
         }
         public async Task<string> UploadFileAsync(Stream fileStream, string fileName, string folderPath = "images")
         {
-            var objectName = $"{folderPath}/{Guid.NewGuid()}_{fileName}";
-            var firebaseToken = Guid.NewGuid().ToString();
-
-            var obj = new Google.Apis.Storage.v1.Data.Object
-            {
-                Bucket = _bucketName,
-                Name = objectName,
-                Metadata = new Dictionary<string, string>
-        {
-            { "firebaseStorageDownloadTokens", firebaseToken }
-        }
-            };
-
-            await _storageClient.UploadObjectAsync(obj, fileStream);
-
-            return CreateFirebaseUrl(objectName, firebaseToken);
+            return await InternalUploadFileAsync(fileStream, fileName, folderPath);
         }
 
         public async Task<string> UploadFileNoteAsync(Stream fileStream, string fileName, string folderPath = "notes")
         {
+            return await InternalUploadFileAsync(fileStream, fileName, folderPath);
+        }
+
+        private async Task<String>InternalUploadFileAsync(Stream fileStream, string fileName, string folderPath)
+        {
             var objectName = $"{folderPath}/{Guid.NewGuid()}_{fileName}";
             var firebaseToken = Guid.NewGuid().ToString();
-
             var obj = new Google.Apis.Storage.v1.Data.Object
             {
                 Bucket = _bucketName,
                 Name = objectName,
                 Metadata = new Dictionary<string, string>
-    {
-        { "firebaseStorageDownloadTokens", firebaseToken }
-    }
+                {
+                    { 
+                        "firebaseStorageDownloadTokens", firebaseToken 
+                    }
+                }
             };
-
             await _storageClient.UploadObjectAsync(obj, fileStream);
             return CreateFirebaseUrl(objectName, firebaseToken);
         }
