@@ -3,6 +3,7 @@ using DXWebApplication4.Repository;
 using DXWebApplication4.Services;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,8 +16,16 @@ namespace DXWebApplication4.Services
         Task CreateProductAsync(ProductViewModel model,IEnumerable<HttpPostedFileBase> files);
         Task<IEnumerable<Product>> GetAllAsync();
         Task<Product> GetDetailsAsync(int id);
+        Task DeleteImageAsync(int idImage);
+
         IEnumerable<Size> GetSizes();
         IEnumerable<Color> GetColors();
+        Task UpdateVariantAsync(
+             int? variantId,
+             int productId,
+             int? sizeId,
+             int? colorId,
+             IEnumerable<HttpPostedFileBase> files, string tenPro = null);
     }
     public class ProductService : IProductService
     {
@@ -27,9 +36,11 @@ namespace DXWebApplication4.Services
         {
             _productRepo = productRepo;
 
-            // config Firebase tại đây, controller không cần biết
-            string bucketName = "doanmusic-c1235.appspot.com";
-            string serviceAccountPath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/doanmusic-c1235-firebase-adminsdk-siavi-faba5c718c.json");
+            var bucketName = ConfigurationManager.AppSettings["Firebase:BucketName"];
+            var serviceAccountPath = System.Web.HttpContext.Current.Server.MapPath(
+                ConfigurationManager.AppSettings["Firebase:ServiceAccountPath"]
+            );
+
             _firebase = new FirebaseService(bucketName, serviceAccountPath);
         }
 
@@ -80,6 +91,61 @@ namespace DXWebApplication4.Services
                 }
             }
         }
+        public async Task DeleteImageAsync(int idImage)
+        {
+            var image = await _productRepo.GetImageByIdAsync(idImage);
+            if (image != null)
+            {
+                _productRepo.DeleteImage(image);
+                await _productRepo.SaveAsync();
+            }
+        }
+        public async Task UpdateVariantAsync(int? variantId, int productId, int? sizeId, int? colorId, IEnumerable<HttpPostedFileBase> files, string tenPro)
+        {
 
+            var product = await _productRepo.GetDetailsAsync(productId)
+                ?? throw new Exception("Sản phẩm không tồn tại.");
+
+            ProductVariant variant = null;
+            if (!string.IsNullOrWhiteSpace(tenPro))
+            {
+                product.TenPro = tenPro;
+                await _productRepo.SaveAsync(); 
+            }
+
+            if (variantId.HasValue)
+            {
+                variant = await _productRepo.GetVariantByIdAsync(variantId.Value)
+                    ?? throw new Exception("Biến thể không tồn tại.");
+            }
+            else
+            {
+                variant = new ProductVariant { IDPro = productId };
+                await _productRepo.AddVariantAsync(variant);
+            }
+
+            if (sizeId.HasValue) variant.IDSize = sizeId.Value;
+            if (colorId.HasValue) variant.IDColor = colorId.Value;
+
+            if (files != null)
+            {
+                foreach (var file in files.Where(f => f != null && f.ContentLength > 0))
+                {
+                    var ext = Path.GetExtension(file.FileName)?.ToLowerInvariant();
+                    if (new[] { ".jpg", ".jpeg", ".png", ".gif" }.Contains(ext))
+                    {
+                        var uniqueName = $"{Guid.NewGuid()}{ext}";
+                        var imageUrl = await _firebase.UploadFileAsync(file.InputStream, uniqueName, "images");
+                        await _productRepo.AddImageAsync(new Image { IDVariant = variant.IDVariant, URL = imageUrl });
+                    }
+                    else
+                    {
+                        throw new Exception("Chỉ hỗ trợ upload file ảnh.");
+                    }
+                }
+            }
+
+            await _productRepo.SaveAsync();
+        }
     }
 }

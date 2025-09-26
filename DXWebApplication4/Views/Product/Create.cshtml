@@ -233,13 +233,12 @@
             <div class="form-section">
                 @(Html.DevExpress().FormLayout(settings => {
                 settings.Name = "ProductForm";
-                settings.ColCount = 2; // Chia form thành 2 cột
-
-                // Nhóm thông tin cơ bản
+                settings.ColCount = 2; 
+  
                 settings.Items.AddGroupItem(groupSettings => {
                     groupSettings.Caption = "Product Details";
                     groupSettings.ColCount = 1;
-                    groupSettings.Width = Unit.Percentage(50); // Chiếm 50% chiều rộng của form
+                    groupSettings.Width = Unit.Percentage(50); 
 
                     groupSettings.Items.Add(i => {
                         i.Caption = "Product Name";
@@ -291,7 +290,6 @@
             }).GetHtml())
             </div>
 
-            <!-- Test với HTML input thông thường -->
             <div class="test-inputs-container">
                 <h4 class="section-title test-section-title">Test với HTML Input thông thường</h4>
                 <div class="form-group">

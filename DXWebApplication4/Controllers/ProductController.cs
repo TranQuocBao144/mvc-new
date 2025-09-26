@@ -1,6 +1,8 @@
 ﻿using DXWebApplication4.Models;
 using DXWebApplication4.Services;
+using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -11,7 +13,6 @@ namespace DXWebApplication4.Controllers
     {
         private readonly IProductService _productService;
 
-        // Controller không new FirebaseService, không new DbContext
         public ProductController(IProductService productService)
         {
             _productService = productService;
@@ -66,6 +67,8 @@ namespace DXWebApplication4.Controllers
         // GET: Product/Details/5
         public async Task<ActionResult> Details(int id)
         {
+            ViewBag.Sizes = _productService.GetSizes().ToList();
+            ViewBag.Colors = _productService.GetColors().ToList();
             var product = await _productService.GetDetailsAsync(id);
             if (product == null)
             {
@@ -73,6 +76,41 @@ namespace DXWebApplication4.Controllers
                 return RedirectToAction("Index");
             }
             return View(product);
+        }
+        [HttpGet]
+        public async Task<ActionResult> DeleteImage(int idImage, int productId)
+        {
+            if (idImage <= 0) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            await _productService.DeleteImageAsync(idImage);
+
+            return RedirectToAction("Details", new { id = productId });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UpdateVariant(int? SelectedVariantId, int IDPro, int? SelectedSize, int? SelectedColor, string TenPro)
+        {
+            if (!SelectedSize.HasValue || !SelectedColor.HasValue)
+            {
+                TempData["Error"] = "Bạn cần chọn Size và Color.";
+                return RedirectToAction("Details", new { id = IDPro });
+            }
+
+            var files = Request.Files.AllKeys
+                .Select(k => Request.Files[k])
+                .Where(f => f != null && f.ContentLength > 0);
+
+            try
+            {
+                await _productService.UpdateVariantAsync(SelectedVariantId, IDPro, SelectedSize.Value, SelectedColor.Value, files,TenPro);
+                TempData["Success"] = "Cập nhật biến thể thành công!";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Lỗi khi cập nhật biến thể: " + ex.Message;
+            }
+
+            return RedirectToAction("Details", new { id = IDPro });
         }
     }
 }

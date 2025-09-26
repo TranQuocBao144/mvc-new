@@ -16,7 +16,10 @@ namespace DXWebApplication4.Repository
         Task AddVariantAsync(ProductVariant variant);
         Task AddImageAsync(Image image);
         Task AddNoteAsync(Note note);
-
+        Task<Image> GetImageByIdAsync(int id);
+        void AddImage(Image image);
+        void DeleteImage(Image image);
+        Task<ProductVariant> GetVariantByIdAsync(int id);
     }
 
     public class ProductRepository : EfRepository<Product>, IProductRepository
@@ -53,5 +56,28 @@ namespace DXWebApplication4.Repository
             _context.Notes.Add(note);
             await _context.SaveChangesAsync();
         }
+        public async Task<Image> GetImageByIdAsync(int id)
+        {
+            return await _context.Images.FindAsync(id);
+        }
+        public void AddImage(Image image)
+        {
+            _context.Images.Add(image);
+            _context.SaveChanges();
+        }
+        public void DeleteImage(Image image)
+        {
+            _context.Images.Remove(image);
+            _context.SaveChanges();
+        }
+        public async Task<ProductVariant> GetVariantByIdAsync(int id)
+        {
+            return await _context.ProductVariants
+                .Include(v => v.Size)
+                .Include(v => v.Color)
+                .Include(v => v.Images)
+                .FirstOrDefaultAsync(v => v.IDVariant == id);
+        }
+
     }
 }
